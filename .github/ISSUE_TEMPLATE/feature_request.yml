@@ -1,0 +1,171 @@
+name: MLOps Platform Feature Request
+description: Request a new feature for the MLOps platform
+title: "[FEATURE] "
+labels: ["enhancement", "mlops-platform"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide detailed information about your request.
+
+  - type: dropdown
+    id: service
+    attributes:
+      label: Target Service
+      description: Which MLOps platform service should this feature be added to?
+      options:
+        - Model Registry
+        - Experiment Tracking
+        - Feature Store
+        - Pipeline Orchestrator
+        - A/B Testing
+        - Monitoring (Prometheus/Grafana)
+        - Infrastructure
+        - New Service
+        - Cross-Service Feature
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Feature Priority
+      description: How important is this feature?
+      options:
+        - Critical (Blocking current work)
+        - High (Important for upcoming milestone)
+        - Medium (Would be nice to have)
+        - Low (Future consideration)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What problem does this feature solve?
+      placeholder: Describe the current limitation or pain point
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your proposed solution in detail
+      placeholder: How should this feature work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered alternative solutions?
+      placeholder: What other approaches have you thought about?
+
+  - type: dropdown
+    id: user_type
+    attributes:
+      label: User Type
+      description: Who would primarily use this feature?
+      options:
+        - Data Scientists
+        - ML Engineers
+        - DevOps Engineers
+        - Platform Administrators
+        - External API Users
+        - All Users
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_cases
+    attributes:
+      label: Use Cases
+      description: Provide specific use cases for this feature
+      placeholder: |
+        1. As a data scientist, I want to...
+        2. As an ML engineer, I need to...
+        3. When working with models, I should be able to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: What criteria must be met for this feature to be considered complete?
+      placeholder: |
+        - [ ] Feature does X
+        - [ ] API endpoint returns Y
+        - [ ] UI displays Z
+        - [ ] Performance meets requirements
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Estimated Complexity
+      description: How complex do you think this feature would be to implement?
+      options:
+        - Simple (1-2 days)
+        - Medium (1-2 weeks)
+        - Complex (1-2 months)
+        - Very Complex (3+ months)
+        - Unknown
+
+  - type: checkboxes
+    id: requirements
+    attributes:
+      label: Requirements
+      description: Check all that apply to this feature
+      options:
+        - label: Requires database schema changes
+        - label: Requires new API endpoints
+        - label: Requires UI/UX changes
+        - label: Requires infrastructure changes
+        - label: Requires documentation updates
+        - label: Requires migration scripts
+        - label: Has security implications
+        - label: Has performance implications
+        - label: Affects external integrations
+
+  - type: textarea
+    id: technical_considerations
+    attributes:
+      label: Technical Considerations
+      description: Any technical considerations or constraints?
+      placeholder: |
+        - Technology stack preferences
+        - Performance requirements
+        - Security considerations
+        - Compatibility requirements
+
+  - type: textarea
+    id: business_value
+    attributes:
+      label: Business Value
+      description: What business value would this feature provide?
+      placeholder: |
+        - Improved productivity
+        - Cost savings
+        - Better user experience
+        - Competitive advantage
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched for existing issues and this is not a duplicate
+          required: true
+        - label: I have clearly described the problem and proposed solution
+          required: true
+        - label: I have provided specific use cases and acceptance criteria
+          required: true
+        - label: I have considered the business value and impact
+          required: true

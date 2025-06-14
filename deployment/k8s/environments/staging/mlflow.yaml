@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mlflow-config
+  namespace: healthcare-ai-staging
+data:
+  MLFLOW_BACKEND_STORE_URI: "postgresql://mlflow:mlflow123@postgres:5432/mlflow_staging"
+  MLFLOW_DEFAULT_ARTIFACT_ROOT: "s3://mlflow-artifacts-staging/"
+  AWS_ACCESS_KEY_ID: "mlflow"
+  AWS_SECRET_ACCESS_KEY: "mlflow123"
+  MLFLOW_S3_ENDPOINT_URL: "http://minio:9000"
+  AWS_S3_VERIFY_SSL: "false"
+  MLFLOW_S3_IGNORE_TLS: "true"
+  MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING: "true"
+  MLFLOW_SYSTEM_METRICS_SAMPLING_INTERVAL: "10"
+  MLFLOW_SYSTEM_METRICS_SAMPLES_BEFORE_LOGGING: "1"
+  ENVIRONMENT: "staging"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow
+  namespace: healthcare-ai-staging
+  labels:
+    app: mlflow
+    environment: staging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mlflow
+  template:
+    metadata:
+      labels:
+        app: mlflow
+    spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: postgres:14
+        command:
+        - sh
+        - -c
+        - |
+          until pg_isready -h postgres -p 5432 -U mlflow; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+      - name: wait-for-minio
+        image: curlimages/curl:latest
+        command:
+        - sh
+        - -c
+        - |
+          until curl -f http://minio:9000/minio/health/live; do
+            echo "Waiting for minio..."
+            sleep 2
+          done
+      containers:
+      - name: mlflow
+        image: mlflow-server:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: mlflow-config
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow
+  namespace: healthcare-ai-staging
+  labels:
+    app: mlflow
+spec:
+  ports:
+  - port: 5000
+    targetPort: 5000
+  selector:
+    app: mlflow
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mlflow-external
+  namespace: healthcare-ai-staging
+  labels:
+    app: mlflow
+spec:
+  type: NodePort
+  ports:
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30600
+  selector:
+    app: mlflow

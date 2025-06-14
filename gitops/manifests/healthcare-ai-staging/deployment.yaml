@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthcare-ai
+  namespace: healthcare-ai-staging
+  labels:
+    app: healthcare-ai
+    version: v2
+    environment: staging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: healthcare-ai
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: healthcare-ai
+        version: v2
+        environment: staging
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: healthcare-ai
+        image: healthcare-ai:v2.0.2
+        imagePullPolicy: Never  # For local development with kind
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: ENVIRONMENT
+          value: "staging"
+        - name: MONITORING_ENABLED
+          value: "true"
+        - name: LOG_LEVEL
+          value: "info"
+        - name: WORKERS
+          value: "1"
+        - name: REDIS_HOST
+          value: "redis.mlops-healthcare.svc.cluster.local"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30

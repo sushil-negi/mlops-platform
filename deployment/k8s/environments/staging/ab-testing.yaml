@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ab-testing-config
+  namespace: healthcare-ai-staging
+data:
+  REDIS_URL: "redis://redis:6379"
+  PROMETHEUS_URL: "http://prometheus:9090"
+  ALERTMANAGER_URL: "http://alertmanager:9093"
+  ENVIRONMENT: "staging"
+  LOG_LEVEL: "INFO"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ab-testing
+  namespace: healthcare-ai-staging
+  labels:
+    app: ab-testing
+    environment: staging
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ab-testing
+  template:
+    metadata:
+      labels:
+        app: ab-testing
+    spec:
+      initContainers:
+      - name: wait-for-redis
+        image: redis:7-alpine
+        command:
+        - sh
+        - -c
+        - |
+          until redis-cli -h redis ping; do
+            echo "Waiting for Redis..."
+            sleep 2
+          done
+      containers:
+      - name: ab-testing
+        image: ab-testing:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: ab-testing-config
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ab-testing
+  namespace: healthcare-ai-staging
+  labels:
+    app: ab-testing
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: ab-testing
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ab-testing-external
+  namespace: healthcare-ai-staging
+  labels:
+    app: ab-testing
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30908
+  selector:
+    app: ab-testing

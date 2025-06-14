@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: healthcare-ai-config
+  namespace: healthcare-ai-staging
+  labels:
+    app: healthcare-ai
+    environment: staging
+data:
+  # Application configuration
+  environment: "staging"
+  log_level: "info"
+  monitoring_enabled: "true"
+  
+  # Healthcare AI specific settings
+  model_path: "/app/models/healthcare_model.joblib"
+  max_response_cache_size: "1000"
+  response_cache_ttl: "3600"
+  
+  # Performance settings
+  max_workers: "2"
+  request_timeout: "30"
+  
+  # Monitoring settings
+  metrics_enabled: "true"
+  health_check_interval: "10"
+  
+  # Crisis detection settings
+  crisis_keywords: "suicide,kill myself,end my life,want to die,hurt myself,self harm"
+  crisis_response_required_confidence: "0.95"

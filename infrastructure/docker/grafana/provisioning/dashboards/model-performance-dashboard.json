@@ -1,0 +1,224 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Healthcare AI Model Performance",
+    "tags": ["healthcare", "ai", "model", "performance"],
+    "timezone": "browser",
+    "refresh": "1m",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Model Accuracy Over Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "healthcare_ai_model_accuracy",
+            "legendFormat": "Model Accuracy"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0.8,
+            "max": 1.0,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 0.85},
+                {"color": "green", "value": 0.90}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Prediction Confidence Distribution",
+        "type": "histogram",
+        "targets": [
+          {
+            "expr": "healthcare_ai_confidence_score_bucket",
+            "legendFormat": "Confidence Distribution"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "Category Accuracy Breakdown",
+        "type": "barchart",
+        "targets": [
+          {
+            "expr": "avg_over_time(healthcare_ai_confidence_score[1h]) by (category)",
+            "legendFormat": "{{category}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          }
+        },
+        "gridPos": {"h": 9, "w": 12, "x": 0, "y": 8}
+      },
+      {
+        "id": 4,
+        "title": "Crisis Detection Performance", 
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "rate(healthcare_ai_requests_total{category=\"crisis\"}[1h]) / rate(healthcare_ai_requests_total[1h]) * 100",
+            "legendFormat": "Crisis Detection Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "color": {"mode": "fixed", "fixedColor": "red"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 0.1},
+                {"color": "red", "value": 1.0}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 9, "w": 12, "x": 12, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Model Inference Latency",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(healthcare_ai_response_time_seconds_bucket{category!=\"crisis\"}[5m]))",
+            "legendFormat": "50th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(healthcare_ai_response_time_seconds_bucket{category!=\"crisis\"}[5m]))",
+            "legendFormat": "95th percentile"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(healthcare_ai_response_time_seconds_bucket{category!=\"crisis\"}[5m]))",
+            "legendFormat": "99th percentile"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 0.5},
+                {"color": "red", "value": 1.0}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 9, "w": 12, "x": 0, "y": 17}
+      },
+      {
+        "id": 6,
+        "title": "Crisis Response Latency",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(healthcare_ai_response_time_seconds_bucket{category=\"crisis\"}[5m]))",
+            "legendFormat": "Crisis Response Time (95th)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "color": {"mode": "fixed", "fixedColor": "red"},
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 0.1},
+                {"color": "red", "value": 0.5}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 9, "w": 12, "x": 12, "y": 17}
+      },
+      {
+        "id": 7,
+        "title": "Model Training History",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "healthcare_ai_model_training_accuracy",
+            "legendFormat": "Training Accuracy",
+            "instant": true
+          },
+          {
+            "expr": "healthcare_ai_model_training_loss",
+            "legendFormat": "Training Loss", 
+            "instant": true
+          },
+          {
+            "expr": "healthcare_ai_model_training_timestamp",
+            "legendFormat": "Training Time",
+            "instant": true
+          }
+        ],
+        "transformations": [
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "Value #A": "Accuracy",
+                "Value #B": "Loss",
+                "Value #C": "Timestamp"
+              }
+            }
+          }
+        ],
+        "gridPos": {"h": 9, "w": 24, "x": 0, "y": 26}
+      },
+      {
+        "id": 8,
+        "title": "Low Confidence Predictions",
+        "type": "logs",
+        "targets": [
+          {
+            "expr": "{service=\"healthcare-ai\"} |= \"low_confidence\" | json",
+            "legendFormat": ""
+          }
+        ],
+        "gridPos": {"h": 9, "w": 24, "x": 0, "y": 35}
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "confidence_threshold",
+          "type": "custom",
+          "options": [
+            {"text": "0.5", "value": "0.5"},
+            {"text": "0.7", "value": "0.7"}, 
+            {"text": "0.8", "value": "0.8"},
+            {"text": "0.9", "value": "0.9"}
+          ],
+          "current": {"text": "0.8", "value": "0.8"}
+        }
+      ]
+    }
+  },
+  "overwrite": true
+}

@@ -1,0 +1,142 @@
+name: MLOps Platform Bug Report
+description: Report a bug in the MLOps platform services
+title: "[BUG] "
+labels: ["bug", "mlops-platform"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please provide as much detail as possible to help us resolve the issue.
+
+  - type: dropdown
+    id: service
+    attributes:
+      label: Affected Service
+      description: Which MLOps platform service is affected?
+      options:
+        - Model Registry
+        - Experiment Tracking
+        - Feature Store
+        - Pipeline Orchestrator
+        - A/B Testing
+        - Monitoring (Prometheus/Grafana)
+        - Infrastructure (Postgres/Redis/MinIO)
+        - Multiple Services
+        - Unknown
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: In which environment did this bug occur?
+      options:
+        - Development (local)
+        - Staging
+        - Production
+        - CI/CD Pipeline
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Bug Severity
+      description: How severe is this bug?
+      options:
+        - Critical (Service Down)
+        - High (Major Feature Broken)
+        - Medium (Feature Partially Working)
+        - Low (Minor Issue)
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug
+      placeholder: Describe what happened and what you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions to reproduce the bug
+      placeholder: |
+        1. Go to...
+        2. Click on...
+        3. Execute command...
+        4. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and Error Messages
+      description: Please include relevant logs, error messages, or stack traces
+      render: shell
+
+  - type: textarea
+    id: environment_details
+    attributes:
+      label: Environment Details
+      description: Please provide environment details
+      placeholder: |
+        - Docker version:
+        - Kubernetes version:
+        - Operating System:
+        - Browser (if applicable):
+        - MLOps Platform version:
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Business Impact
+      description: What is the impact of this bug?
+      options:
+        - Blocking development/deployment
+        - Affecting model training/serving
+        - Impacting monitoring/observability
+        - Data loss/corruption risk
+        - Security vulnerability
+        - Performance degradation
+        - Minor inconvenience
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I have searched for existing issues and this is not a duplicate
+          required: true
+        - label: I have provided sufficient details to reproduce the issue
+          required: true
+        - label: I have included relevant logs and error messages
+          required: true
+        - label: I have specified the correct service and environment
+          required: true

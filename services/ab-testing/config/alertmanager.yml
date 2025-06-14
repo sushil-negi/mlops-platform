@@ -1,0 +1,27 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@healthcare-ai.com'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'ab-test-safety'
+
+receivers:
+- name: 'ab-test-safety'
+  webhook_configs:
+  - url: 'http://ab-testing:8000/webhook/alerts'
+    send_resolved: true
+    http_config:
+      basic_auth:
+        username: 'admin'
+        password: 'admin123'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'experiment_id']

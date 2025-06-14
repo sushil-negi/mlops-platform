@@ -1,0 +1,121 @@
+groups:
+  - name: healthcare_ai_safety
+    interval: 30s
+    rules:
+      # Critical: Crisis detection rate below threshold
+      - alert: CrisisDetectionRateLow
+        expr: healthcare_ai_crisis_detection_rate < 0.99
+        for: 1m
+        labels:
+          severity: critical
+          team: healthcare-ai
+        annotations:
+          summary: "Crisis detection rate critically low: {{ $value }}"
+          description: "Healthcare AI crisis detection rate is {{ $value }}, below 99% threshold. This is a safety-critical issue."
+          
+      # Critical: Model accuracy below threshold
+      - alert: ModelAccuracyLow
+        expr: healthcare_ai_model_accuracy < 0.90
+        for: 5m
+        labels:
+          severity: critical
+          team: healthcare-ai
+        annotations:
+          summary: "Model accuracy below threshold: {{ $value }}"
+          description: "Healthcare AI model accuracy is {{ $value }}, below 90% threshold. Consider model retirement."
+          
+      # Warning: Response time high
+      - alert: HighResponseTime
+        expr: healthcare_ai_response_time_seconds > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: healthcare-ai
+        annotations:
+          summary: "Response time high: {{ $value }}s"
+          description: "Healthcare AI response time is {{ $value }}s, above 500ms threshold."
+          
+      # Critical: Empathy score low
+      - alert: EmpathyScoreLow
+        expr: healthcare_ai_empathy_score < 0.65
+        for: 5m
+        labels:
+          severity: critical
+          team: healthcare-ai
+        annotations:
+          summary: "Empathy score below threshold: {{ $value }}"
+          description: "Healthcare AI empathy score is {{ $value }}, below 65% threshold."
+          
+      # Warning: High error rate
+      - alert: HighErrorRate
+        expr: rate(healthcare_ai_requests_total{status="error"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          team: healthcare-ai
+        annotations:
+          summary: "Error rate above 5%"
+          description: "Healthcare AI error rate is {{ $value }}, indicating potential issues."
+          
+  - name: infrastructure_health
+    interval: 30s
+    rules:
+      # Warning: MLflow down
+      - alert: MLflowDown
+        expr: up{job="mlflow"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          team: mlops
+        annotations:
+          summary: "MLflow tracking server is down"
+          description: "MLflow has been down for more than 2 minutes."
+          
+      # Critical: Database down
+      - alert: PostgreSQLDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: mlops
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL has been down for more than 1 minute."
+          
+      # Warning: High memory usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.90
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Memory usage above 90%"
+          description: "System memory usage is {{ $value }}%, consider scaling."
+          
+  - name: ab_testing_safety
+    interval: 15s
+    rules:
+      # Critical: A/B test safety violation
+      - alert: ABTestSafetyViolation
+        expr: ab_test_model_crisis_detection_rate < 0.99
+        for: 30s
+        labels:
+          severity: critical
+          team: healthcare-ai
+          action: stop_experiment
+        annotations:
+          summary: "A/B test safety violation - crisis detection below threshold"
+          description: "Model {{ $labels.model_id }} in experiment {{ $labels.experiment_id }} has crisis detection rate {{ $value }}. Experiment should be stopped immediately."
+          
+      # Warning: A/B test performance degradation
+      - alert: ABTestPerformanceDegradation
+        expr: |
+          (ab_test_model_accuracy{model="test"} / ab_test_model_accuracy{model="control"} - 1) < -0.05
+        for: 5m
+        labels:
+          severity: warning
+          team: healthcare-ai
+        annotations:
+          summary: "A/B test model performing 5% worse than control"
+          description: "Test model in experiment {{ $labels.experiment_id }} is performing {{ $value }}% worse than control."

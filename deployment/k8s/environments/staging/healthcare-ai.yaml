@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: healthcare-ai-config
+  namespace: healthcare-ai-staging
+data:
+  MODEL_NAME: "healthcare-ai-staging"
+  MODEL_VERSION: "latest"
+  ENVIRONMENT: "staging"
+  MLFLOW_TRACKING_URI: "http://mlflow:5000"
+  REDIS_URL: "redis://redis:6379"
+  LOG_LEVEL: "INFO"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: healthcare-ai
+  namespace: healthcare-ai-staging
+  labels:
+    app: healthcare-ai
+    environment: staging
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: healthcare-ai
+  template:
+    metadata:
+      labels:
+        app: healthcare-ai
+    spec:
+      initContainers:
+      - name: wait-for-mlflow
+        image: curlimages/curl:latest
+        command:
+        - sh
+        - -c
+        - |
+          until curl -f http://mlflow:5000/; do
+            echo "Waiting for MLflow..."
+            sleep 5
+          done
+      - name: wait-for-redis
+        image: redis:7-alpine
+        command:
+        - sh
+        - -c
+        - |
+          until redis-cli -h redis ping; do
+            echo "Waiting for Redis..."
+            sleep 2
+          done
+      containers:
+      - name: healthcare-ai
+        image: healthcare-ai:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: healthcare-ai-config
+        volumeMounts:
+        - name: model-artifacts
+          mountPath: /app/artifacts
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+      volumes:
+      - name: model-artifacts
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthcare-ai
+  namespace: healthcare-ai-staging
+  labels:
+    app: healthcare-ai
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: healthcare-ai
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: healthcare-ai-external
+  namespace: healthcare-ai-staging
+  labels:
+    app: healthcare-ai
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    targetPort: 8000
+    nodePort: 30900
+  selector:
+    app: healthcare-ai

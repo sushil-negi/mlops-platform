@@ -1,0 +1,86 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alerts.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Healthcare AI Model
+  - job_name: 'healthcare-ai'
+    static_configs:
+      - targets: ['healthcare-ai:8000', 'mlops-project-healthcare-ai-1:8000']
+    metrics_path: /metrics
+    scrape_interval: 10s
+    
+  # Healthcare AI Kubernetes Pods
+  - job_name: 'healthcare-ai-k8s'
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names:
+            - healthcare-ai-staging
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        action: keep
+        regex: healthcare-ai
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+
+  # Model Registry
+  - job_name: 'model-registry'
+    static_configs:
+      - targets: ['model-registry:8000']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Pipeline Orchestrator
+  - job_name: 'pipeline-orchestrator'
+    static_configs:
+      - targets: ['pipeline-orchestrator:8000']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Monitoring Engine
+  - job_name: 'monitoring-engine'
+    static_configs:
+      - targets: ['monitoring-engine:8000']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # MLflow
+  - job_name: 'mlflow'
+    static_configs:
+      - targets: ['host.docker.internal:5050', 'mlops-mlflow:5000']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Infrastructure services
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['host.docker.internal:5432', 'mlops-project-postgres-1:5432']
+    scrape_interval: 30s
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['host.docker.internal:6379', 'mlops-project-redis-1:6379']
+    scrape_interval: 30s
+
+  - job_name: 'minio'
+    static_configs:
+      - targets: ['host.docker.internal:9000', 'mlops-project-minio-1:9000']
+    metrics_path: /minio/v2/metrics/cluster
+    scrape_interval: 30s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - host.docker.internal:9093

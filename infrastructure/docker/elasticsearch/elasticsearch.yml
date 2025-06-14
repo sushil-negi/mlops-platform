@@ -1,0 +1,26 @@
+cluster.name: healthcare-ai-logs
+node.name: healthcare-ai-elasticsearch
+
+# Network settings
+network.host: 0.0.0.0
+http.port: 9200
+transport.port: 9300
+
+# Discovery settings for single node
+discovery.type: single-node
+
+# Security settings
+xpack.security.enabled: false
+
+# Memory settings
+bootstrap.memory_lock: true
+
+# Monitoring
+xpack.monitoring.collection.enabled: true
+
+# Index settings
+action.auto_create_index: .monitoring*,.watches,.triggered_watches,.watcher-history*,.ml*,healthcare-ai-logs-*
+
+# Path settings
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: healthcare-ai-staging
+  labels:
+    environment: staging
+    app.kubernetes.io/name: healthcare-ai
+    app.kubernetes.io/environment: staging

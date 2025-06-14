@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubeflow-pipelines-config
+  namespace: mlops-healthcare
+data:
+  pipeline-config.yaml: |
+    healthcare:
+      validation:
+        crisis_detection_threshold: 0.99
+        response_quality_min: 0.85
+        safety_check_enabled: true
+      compliance:
+        hipaa_logging: true
+        audit_trail: true
+        data_retention_days: 2555  # 7 years
+      monitoring:
+        model_drift_threshold: 0.1
+        performance_alert_threshold: 0.8
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeflow-pipeline-controller
+  namespace: mlops-healthcare
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeflow-pipeline-controller
+  template:
+    metadata:
+      labels:
+        app: kubeflow-pipeline-controller
+    spec:
+      containers:
+      - name: pipeline-controller
+        image: gcr.io/ml-pipeline/api-server:2.0.5
+        env:
+        - name: NAMESPACE
+          value: mlops-healthcare
+        - name: HEALTHCARE_MODE
+          value: "true"
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+      volumes:
+      - name: config
+        configMap:
+          name: kubeflow-pipelines-config

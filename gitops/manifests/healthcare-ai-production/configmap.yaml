@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: healthcare-ai-config
+  namespace: healthcare-ai-prod
+  labels:
+    app: healthcare-ai
+    environment: production
+data:
+  # Application configuration
+  environment: "production"
+  log_level: "warning"
+  monitoring_enabled: "true"
+  
+  # Healthcare AI specific settings
+  model_path: "/app/models/healthcare_model.joblib"
+  max_response_cache_size: "5000"  # Larger cache for production
+  response_cache_ttl: "7200"       # Longer TTL for production
+  
+  # Performance settings
+  max_workers: "4"                 # More workers for production
+  request_timeout: "15"            # Stricter timeout for production
+  
+  # Monitoring settings
+  metrics_enabled: "true"
+  health_check_interval: "5"       # More frequent health checks
+  
+  # Crisis detection settings
+  crisis_keywords: "suicide,kill myself,end my life,want to die,hurt myself,self harm"
+  crisis_response_required_confidence: "0.99"  # Higher confidence required for production

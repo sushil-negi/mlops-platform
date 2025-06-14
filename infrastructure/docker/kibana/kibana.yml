@@ -1,0 +1,27 @@
+server.name: healthcare-ai-kibana
+server.host: "0.0.0.0"
+server.port: 5601
+
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+
+# Monitoring
+monitoring.ui.container.elasticsearch.enabled: true
+monitoring.kibana.collection.enabled: false
+
+# Security
+xpack.security.enabled: false
+
+# Logging
+logging.level: info
+logging.dest: stdout
+
+# Dashboard settings
+kibana.index: ".kibana"
+kibana.defaultAppId: "dashboard"
+
+# Default index pattern
+kibana.autocompleteTimeout: 1000
+kibana.autocompleteTerminateAfter: 100000
+
+# Server settings
+server.maxPayloadBytes: 1048576

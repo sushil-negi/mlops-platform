@@ -1,0 +1,65 @@
+filebeat.inputs:
+- type: container
+  paths:
+    - '/var/lib/docker/containers/*/*.log'
+  processors:
+    - add_docker_metadata:
+        host: "unix:///var/run/docker.sock"
+    - decode_json_fields:
+        fields: ["message"]
+        target: ""
+        overwrite_keys: true
+
+# Healthcare AI specific log collection
+- type: log
+  enabled: true
+  paths:
+    - /logs/healthcare-ai/*.log
+  fields:
+    service: healthcare-ai
+    environment: "${ENVIRONMENT:development}"
+  fields_under_root: true
+  multiline.pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
+  multiline.negate: true
+  multiline.match: after
+
+- type: log
+  enabled: true
+  paths:
+    - /logs/mlflow/*.log
+  fields:
+    service: mlflow
+    environment: "${ENVIRONMENT:development}"
+  fields_under_root: true
+
+# Model training logs
+- type: log
+  enabled: true
+  paths:
+    - /logs/training/*.log
+  fields:
+    service: model-training
+    environment: "${ENVIRONMENT:development}"
+  fields_under_root: true
+
+output.logstash:
+  hosts: ["logstash:5044"]
+
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_kubernetes_metadata:
+      host: ${HOSTNAME}
+      matchers:
+      - logs_path:
+          logs_path: "/var/log/containers/"
+
+# Logging
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644

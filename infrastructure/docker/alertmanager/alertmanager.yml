@@ -1,0 +1,113 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alertmanager@healthcare-ai.local'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'web.hook'
+  routes:
+  - match:
+      severity: critical
+    receiver: 'critical-alerts'
+    group_wait: 0s
+    repeat_interval: 5m
+  - match:
+      service: healthcare-ai
+      alert_type: crisis_response
+    receiver: 'crisis-alerts'
+    group_wait: 0s
+    repeat_interval: 1m
+  - match:
+      service: healthcare-ai
+      alert_type: slow_response
+    receiver: 'performance-alerts'
+    repeat_interval: 15m
+  - match:
+      service: model-training
+      alert_type: low_accuracy
+    receiver: 'model-alerts'
+    repeat_interval: 30m
+
+receivers:
+- name: 'web.hook'
+  webhook_configs:
+  - url: 'http://healthcare-ai-service:8080/alerts/webhook'
+    send_resolved: true
+
+- name: 'critical-alerts'
+  slack_configs:
+  - api_url: 'http://localhost:9095/slack-webhook'
+    channel: '#healthcare-ai-critical'
+    title: '🚨 CRITICAL: Healthcare AI Alert'
+    text: |
+      Alert: {{ .GroupLabels.alertname }}
+      Service: {{ .GroupLabels.service }}
+      Severity: {{ .GroupLabels.severity }}
+      
+      {{ range .Alerts }}
+      Message: {{ .Annotations.message }}
+      Time: {{ .StartsAt }}
+      {{ end }}
+    send_resolved: true
+
+- name: 'crisis-alerts'
+  slack_configs:
+  - api_url: 'http://localhost:9095/slack-webhook'
+    channel: '#healthcare-ai-crisis'
+    title: '🚨 CRISIS RESPONSE DETECTED'
+    text: |
+      A crisis response was triggered in the Healthcare AI system.
+      
+      Alert: {{ .GroupLabels.alertname }}
+      Time: {{ .GroupLabels.timestamp }}
+      Environment: {{ .GroupLabels.environment }}
+      
+      This indicates a user may be in crisis and received emergency resources.
+      Please monitor system stability and ensure crisis detection is functioning properly.
+    send_resolved: false
+  email_configs:
+  - to: 'healthcare-ai-team@company.com'
+    headers:
+      subject: 'URGENT: Healthcare AI Crisis Response Triggered'
+
+- name: 'performance-alerts'
+  slack_configs:
+  - api_url: 'http://localhost:9095/slack-webhook'
+    channel: '#healthcare-ai-performance'
+    title: '⚠️ Performance Issue'
+    text: |
+      Performance degradation detected in Healthcare AI.
+      
+      Alert: {{ .GroupLabels.alertname }}
+      Response Time: {{ .GroupLabels.response_time }}s
+      Threshold: 1.0s
+      
+      {{ range .Alerts }}
+      Details: {{ .Annotations.message }}
+      {{ end }}
+
+- name: 'model-alerts'
+  slack_configs:
+  - api_url: 'http://localhost:9095/slack-webhook'
+    channel: '#healthcare-ai-models'
+    title: '📊 Model Performance Alert'
+    text: |
+      Model performance issue detected.
+      
+      Alert: {{ .GroupLabels.alertname }}
+      Accuracy: {{ .GroupLabels.accuracy }}
+      Threshold: 0.90
+      
+      {{ range .Alerts }}
+      Training Details: {{ .Annotations.message }}
+      {{ end }}
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']

@@ -1,0 +1,20 @@
+# Core FastAPI components
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Database - basic only
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+
+# Redis
+redis==5.0.1
+
+# Object Storage
+boto3==1.34.0
+
+# HTTP client
+httpx==0.25.2
+
+# Monitoring
+prometheus-client==0.19.0
