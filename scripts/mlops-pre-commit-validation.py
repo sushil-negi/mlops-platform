@@ -244,19 +244,18 @@ class MLOpsPreCommitValidator:
         """Run Bandit security scan"""
         start_time = time.time()
 
-        # Bandit outputs logs to stderr, so we need to capture stdout only
         cmd = [
             "python3",
-            "-c",
-            """
-import subprocess, sys
-result = subprocess.run([
-    sys.executable, '-m', 'bandit', '-r', 'services/', 'scripts/', 
-    '-f', 'json', '--exclude', '**/tests/**'
-], capture_output=True, text=True)
-print(result.stdout)
-sys.exit(0 if result.stdout.strip() else 1)
-            """,
+            "-m",
+            "bandit",
+            "-r",
+            "services/",
+            "scripts/",
+            "-f",
+            "json",
+            "--exclude",
+            "**/tests/**",
+            "--quiet",
         ]
         success, stdout, stderr = self.run_command(cmd)
         duration = time.time() - start_time
