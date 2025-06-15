@@ -91,31 +91,6 @@ jobs:
   # Infrastructure validation
   infrastructure-tests:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: mlops
-          POSTGRES_PASSWORD: test123
-          POSTGRES_DB: mlops_platform
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U mlops -d mlops_platform"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-      
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
     steps:
     - uses: actions/checkout@v4
     
@@ -123,6 +98,31 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y postgresql-client redis-tools
+    
+    - name: Create test environment file
+      run: |
+        cat > .env << EOF
+        POSTGRES_PASSWORD=test123
+        MINIO_ROOT_PASSWORD=test123456
+        GRAFANA_ADMIN_PASSWORD=test123
+        EOF
+    
+    - name: Start infrastructure services with docker-compose
+      run: |
+        # Start only infrastructure services for testing
+        docker compose -f docker-compose.platform.yml up -d postgres redis minio
+        sleep 30
+        
+        # Show container status
+        docker compose -f docker-compose.platform.yml ps
+        
+        # Show logs for debugging
+        echo "=== PostgreSQL logs ==="
+        docker compose -f docker-compose.platform.yml logs postgres --tail 10
+        echo "=== Redis logs ==="
+        docker compose -f docker-compose.platform.yml logs redis --tail 10
+        echo "=== MinIO logs ==="
+        docker compose -f docker-compose.platform.yml logs minio --tail 10
     
     - name: Wait for PostgreSQL to be ready
       run: |
@@ -138,6 +138,10 @@ jobs:
       run: |
         redis-cli -h localhost ping
     
+    - name: Test MinIO connectivity
+      run: |
+        curl -f http://localhost:9000/minio/health/live
+    
     - name: Validate Prometheus configuration
       run: |
         docker run --rm -v $PWD/infrastructure/docker/prometheus:/etc/prometheus --entrypoint promtool prom/prometheus:latest check config /etc/prometheus/prometheus.yml
@@ -145,6 +149,11 @@ jobs:
     - name: Validate Grafana provisioning
       run: |
         find infrastructure/docker/grafana/provisioning -name "*.yml" -exec echo "Checking {}" \; -exec cat {} \;
+    
+    - name: Cleanup infrastructure services
+      if: always()
+      run: |
+        docker compose -f docker-compose.platform.yml down -v
 
   # Integration tests with actual services
   integration-tests:
@@ -160,7 +169,7 @@ jobs:
       run: |
         cat > .env << EOF
         POSTGRES_PASSWORD=test123
-        MINIO_ROOT_PASSWORD=test123
+        MINIO_ROOT_PASSWORD=test123456
         GRAFANA_ADMIN_PASSWORD=test123
         EOF
     
