@@ -137,9 +137,56 @@ jobs:
         echo "PostgreSQL is ready!"
         
         echo "Waiting for Redis..."
-        echo "Using Docker to test Redis connectivity..."
-        timeout 120 bash -c 'until docker run --rm --network host redis:7-alpine redis-cli -h localhost ping > /dev/null 2>&1; do echo "Waiting for Redis..."; sleep 5; done'
-        echo "Redis is ready!"
+        echo "=== DEBUGGING REDIS CONNECTION ==="
+        
+        # Show available Redis packages
+        echo "Checking available Redis packages:"
+        apt-cache search redis | grep cli || echo "No redis packages found"
+        
+        # Show Docker availability
+        echo "Docker version:"
+        docker --version
+        
+        # Show running containers
+        echo "Running containers:"
+        docker ps
+        
+        # Test simple Docker command first
+        echo "Testing basic Docker functionality:"
+        docker run --rm hello-world || echo "Basic Docker failed"
+        
+        # Test Redis container without networking
+        echo "Testing Redis container (without networking):"
+        docker run --rm redis:7-alpine redis-cli --version || echo "Redis container failed"
+        
+        # Check network connectivity to localhost
+        echo "Testing localhost connectivity:"
+        curl -v http://localhost:6379 || echo "Direct curl to Redis port failed"
+        
+        # Try different network approaches
+        echo "Trying Redis connection with different network modes:"
+        
+        # Method 1: --network host
+        echo "Method 1: --network host"
+        docker run --rm --network host redis:7-alpine redis-cli -h localhost -p 6379 ping || echo "Method 1 failed"
+        
+        # Method 2: connect to container network
+        echo "Method 2: Connect to container network"
+        docker run --rm --network mlops-platform-network redis:7-alpine redis-cli -h mlops-platform-redis-1 -p 6379 ping || echo "Method 2 failed"
+        
+        # Method 3: use host.docker.internal
+        echo "Method 3: host.docker.internal"
+        docker run --rm redis:7-alpine redis-cli -h host.docker.internal -p 6379 ping || echo "Method 3 failed"
+        
+        # Method 4: direct container IP
+        echo "Method 4: Get container IP and connect directly"
+        REDIS_IP=$(docker inspect mlops-platform-redis-1 --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' || echo "failed")
+        echo "Redis container IP: $REDIS_IP"
+        if [ "$REDIS_IP" != "failed" ] && [ -n "$REDIS_IP" ]; then
+          docker run --rm redis:7-alpine redis-cli -h $REDIS_IP -p 6379 ping || echo "Method 4 failed"
+        fi
+        
+        echo "=== END REDIS DEBUGGING ==="
         
         echo "Waiting for MinIO..."
         timeout 120 bash -c 'until curl -f http://localhost:9000/minio/health/live > /dev/null 2>&1; do echo "Waiting for MinIO..."; sleep 5; done'
@@ -151,8 +198,37 @@ jobs:
     
     - name: Test Redis connectivity
       run: |
-        echo "Using Docker to test Redis connectivity..."
-        docker run --rm --network host redis:7-alpine redis-cli -h localhost ping
+        echo "=== DETAILED REDIS CONNECTIVITY TEST ==="
+        
+        # Show container status again
+        echo "Container status:"
+        docker compose -f docker-compose.platform.yml ps
+        
+        # Show Redis logs
+        echo "Redis container logs:"
+        docker compose -f docker-compose.platform.yml logs redis --tail 20
+        
+        # Show network information
+        echo "Docker networks:"
+        docker network ls
+        
+        echo "Network details for mlops-platform-network:"
+        docker network inspect mlops-platform-network || echo "Network inspect failed"
+        
+        # Test with different methods that worked in debugging
+        echo "Testing Redis connectivity with working method from debugging..."
+        
+        # Get Redis container IP
+        REDIS_IP=$(docker inspect mlops-platform-redis-1 --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' 2>/dev/null || echo "")
+        echo "Redis IP: '$REDIS_IP'"
+        
+        if [ -n "$REDIS_IP" ]; then
+          echo "Trying direct IP connection..."
+          docker run --rm redis:7-alpine redis-cli -h "$REDIS_IP" -p 6379 ping && echo "✅ Redis connectivity successful" || echo "❌ Redis connectivity failed"
+        else
+          echo "Could not get Redis IP, trying network connection..."
+          docker run --rm --network mlops-platform-network redis:7-alpine redis-cli -h mlops-platform-redis-1 -p 6379 ping && echo "✅ Redis connectivity successful" || echo "❌ Redis connectivity failed"
+        fi
     
     - name: Test MinIO connectivity
       run: |
