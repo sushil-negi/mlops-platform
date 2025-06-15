@@ -5,7 +5,7 @@ services:
   model-registry:
     build: 
       context: ./services/model-registry
-      dockerfile: Dockerfile.simple
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     environment:

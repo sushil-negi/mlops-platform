@@ -1,11 +1,19 @@
 -- Initialize MLOps databases
 CREATE USER mlflow WITH PASSWORD 'mlflow123';
 CREATE DATABASE mlflow OWNER mlflow;
-CREATE DATABASE model_registry OWNER mlflow;
+CREATE DATABASE model_registry OWNER mlops;
+CREATE DATABASE experiment_tracking OWNER mlops;
+CREATE DATABASE feature_store OWNER mlops;
+CREATE DATABASE pipeline_orchestrator OWNER mlops;
+CREATE DATABASE ab_testing OWNER mlops;
 
 -- Grant permissions
 GRANT ALL PRIVILEGES ON DATABASE mlflow TO mlflow;
-GRANT ALL PRIVILEGES ON DATABASE model_registry TO mlflow;
+GRANT ALL PRIVILEGES ON DATABASE model_registry TO mlops;
+GRANT ALL PRIVILEGES ON DATABASE experiment_tracking TO mlops;
+GRANT ALL PRIVILEGES ON DATABASE feature_store TO mlops;
+GRANT ALL PRIVILEGES ON DATABASE pipeline_orchestrator TO mlops;
+GRANT ALL PRIVILEGES ON DATABASE ab_testing TO mlops;
 
 -- Create schemas for different services
 \c mlflow;
