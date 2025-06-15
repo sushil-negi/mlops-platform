@@ -3,7 +3,6 @@
 Check staged files for potential secrets and sensitive information
 """
 
-import os
 import re
 import subprocess
 import sys
@@ -127,8 +126,6 @@ def scan_file_for_secrets(file_path: str) -> List[Tuple[int, str, str]]:
         return issues
 
     for line_num, line in enumerate(lines, 1):
-        line_lower = line.lower()
-
         for pattern, secret_type in SECRET_PATTERNS:
             matches = re.finditer(pattern, line, re.IGNORECASE)
 

@@ -5,13 +5,12 @@ Runs code quality checks specific to the MLOps platform
 """
 
 import json
-import os
 import subprocess
 import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 
 @dataclass
@@ -99,11 +98,12 @@ class MLOpsPreCommitValidator:
                 error="Failed to check git status",
             )
 
+        file_count = len(stdout.strip().split() if stdout.strip() else [])
         return ValidationResult(
             name="Git Status Check",
             passed=True,
             duration=duration,
-            output=f"Git status: {len(stdout.strip().split() if stdout.strip() else [])} changed files",
+            output=f"Git status: {file_count} changed files",
         )
 
     def run_black_formatting(self) -> ValidationResult:
@@ -197,7 +197,8 @@ class MLOpsPreCommitValidator:
                 name="Flake8 Linting",
                 passed=False,
                 duration=duration,
-                output=f"Linting issues:\n{stdout[:1000]}{'... (truncated)' if len(stdout) > 1000 else ''}",
+                output=f"Linting issues:\n{stdout[:1000]}"
+                + ("... (truncated)" if len(stdout) > 1000 else ""),
                 error=f"Found {len(lines)} linting issues",
             )
 
@@ -277,7 +278,8 @@ class MLOpsPreCommitValidator:
                         name="Bandit Security Scan",
                         passed=len(high_issues) == 0,
                         duration=duration,
-                        output=f"Security scan completed. High-severity issues: {len(high_issues)}",
+                        output=f"Security scan completed. High-severity issues: "
+                        f"{len(high_issues)}",
                         error=(
                             f"Found {len(high_issues)} high-severity security issues"
                             if high_issues
@@ -331,7 +333,7 @@ class MLOpsPreCommitValidator:
                     print(f"   Error: {result.error}")
                 if result.output and len(result.output) > 0:
                     output_lines = result.output.split("\n")[:10]
-                    print(f"   Output (first 10 lines):")
+                    print("   Output (first 10 lines):")
                     for line in output_lines:
                         print(f"   {line}")
                     output_line_count = len(result.output.split("\n"))
