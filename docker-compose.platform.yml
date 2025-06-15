@@ -14,9 +14,12 @@ services:
       - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - MINIO_SECURE=false
     depends_on:
-      - postgres
-      - redis
-      - minio
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     networks:
       - mlops-platform
     healthcheck:
@@ -65,9 +68,12 @@ services:
       - S3_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - S3_USE_SSL=false
     depends_on:
-      - postgres
-      - redis
-      - minio
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     networks:
       - mlops-platform
     healthcheck:
@@ -93,11 +99,16 @@ services:
       - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - MINIO_SECURE=false
     depends_on:
-      - postgres
-      - redis
-      - model-registry
-      - experiment-tracking
-      - feature-store
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      model-registry:
+        condition: service_healthy
+      experiment-tracking:
+        condition: service_healthy
+      feature-store:
+        condition: service_healthy
     networks:
       - mlops-platform
     healthcheck:
@@ -118,10 +129,14 @@ services:
       - MODEL_REGISTRY_URL=http://model-registry:8000
       - PROMETHEUS_URL=http://prometheus:9090
     depends_on:
-      - postgres
-      - redis
-      - model-registry
-      - prometheus
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      model-registry:
+        condition: service_healthy
+      prometheus:
+        condition: service_healthy
     networks:
       - mlops-platform
     healthcheck:
@@ -222,7 +237,8 @@ services:
       - grafana_data:/var/lib/grafana
       - ./infrastructure/docker/grafana/provisioning:/etc/grafana/provisioning
     depends_on:
-      - prometheus
+      prometheus:
+        condition: service_healthy
     networks:
       - mlops-platform
     healthcheck:
