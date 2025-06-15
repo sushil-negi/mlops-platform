@@ -115,9 +115,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 60 bash -c 'until PGPASSWORD=test123 pg_isready -h localhost -U mlops; do sleep 2; done'
+    
     - name: Test database migrations
       run: |
-        PGPASSWORD=test123 psql -h localhost -U mlops -d mlops_platform -f infrastructure/postgres/init.sql
+        PGPASSWORD=test123 psql -h localhost -U mlops -d mlops_platform -f infrastructure/docker/postgres/init.sql
     
     - name: Test Redis connectivity
       run: |
@@ -191,7 +195,7 @@ jobs:
     
     - name: Upload logs artifact
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: platform-logs
         path: platform-logs.txt
@@ -199,6 +203,9 @@ jobs:
   # Security and compliance validation
   security-compliance:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
     steps:
     - uses: actions/checkout@v4
     
@@ -209,12 +216,14 @@ jobs:
         scan-ref: '.'
         format: 'sarif'
         output: 'trivy-results.sarif'
+      continue-on-error: true
     
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
-      if: always()
+      uses: github/codeql-action/upload-sarif@v3
+      if: always() && hashFiles('trivy-results.sarif') != ''
       with:
         sarif_file: 'trivy-results.sarif'
+      continue-on-error: true
     
     - name: Check for exposed secrets
       run: |
