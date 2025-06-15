@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """Comprehensive MLOps Platform Integration Test"""
 
-import json
-import time
-from typing import Dict, List, Tuple
+from typing import List
 
 import requests
 
