@@ -7,9 +7,15 @@ import uuid
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, HTTPException, Query, status
-from models.project import (PROJECT_TEMPLATES, ProjectCreate,
-                            ProjectListResponse, ProjectResponse, ProjectStats,
-                            ProjectSummary, ProjectUpdate)
+from models.project import (
+    PROJECT_TEMPLATES,
+    ProjectCreate,
+    ProjectListResponse,
+    ProjectResponse,
+    ProjectStats,
+    ProjectSummary,
+    ProjectUpdate,
+)
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)

@@ -7,8 +7,17 @@ from typing import Dict
 from uuid import uuid4
 
 from core.database import Base
-from sqlalchemy import (JSON, Boolean, Column, DateTime, Float, ForeignKey,
-                        Index, Integer, String)
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+)
 from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 from sqlalchemy.orm import relationship
 
