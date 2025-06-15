@@ -119,20 +119,16 @@ jobs:
         echo "=== MinIO logs ==="
         docker compose -f docker-compose.platform.yml logs minio --tail 10
     
-    - name: Install database clients
+    - name: Install PostgreSQL client
       run: |
         sudo apt-get update
-        sudo apt-get install -y postgresql-client redis-tools
+        sudo apt-get install -y postgresql-client
         
-        # Verify installations
-        echo "Checking installed tools..."
-        which pg_isready || echo "pg_isready not found"
-        which redis-cli || echo "redis-cli not found"
+        # Verify PostgreSQL client installation
+        echo "Checking PostgreSQL client..."
+        which pg_isready && echo "✅ pg_isready found" || echo "❌ pg_isready not found"
         
-        # Alternative: Use Docker for Redis testing if redis-cli is not available
-        if ! which redis-cli > /dev/null 2>&1; then
-          echo "redis-cli not found, will use docker for Redis testing"
-        fi
+        echo "Note: Redis connectivity will be tested using Docker containers"
     
     - name: Wait for infrastructure services to be ready
       run: |
@@ -141,12 +137,8 @@ jobs:
         echo "PostgreSQL is ready!"
         
         echo "Waiting for Redis..."
-        if which redis-cli > /dev/null 2>&1; then
-          timeout 120 bash -c 'until redis-cli -h localhost ping > /dev/null 2>&1; do echo "Waiting for Redis..."; sleep 5; done'
-        else
-          echo "Using Docker to test Redis connectivity..."
-          timeout 120 bash -c 'until docker run --rm --network host redis:7-alpine redis-cli -h localhost ping > /dev/null 2>&1; do echo "Waiting for Redis..."; sleep 5; done'
-        fi
+        echo "Using Docker to test Redis connectivity..."
+        timeout 120 bash -c 'until docker run --rm --network host redis:7-alpine redis-cli -h localhost ping > /dev/null 2>&1; do echo "Waiting for Redis..."; sleep 5; done'
         echo "Redis is ready!"
         
         echo "Waiting for MinIO..."
@@ -159,12 +151,8 @@ jobs:
     
     - name: Test Redis connectivity
       run: |
-        if which redis-cli > /dev/null 2>&1; then
-          redis-cli -h localhost ping
-        else
-          echo "Using Docker to test Redis connectivity..."
-          docker run --rm --network host redis:7-alpine redis-cli -h localhost ping
-        fi
+        echo "Using Docker to test Redis connectivity..."
+        docker run --rm --network host redis:7-alpine redis-cli -h localhost ping
     
     - name: Test MinIO connectivity
       run: |
