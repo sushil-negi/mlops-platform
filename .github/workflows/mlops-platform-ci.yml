@@ -140,7 +140,7 @@ jobs:
     
     - name: Validate Prometheus configuration
       run: |
-        docker run --rm -v $PWD/infrastructure/docker/prometheus:/etc/prometheus prom/prometheus:latest promtool check config /etc/prometheus/prometheus.yml
+        docker run --rm -v $PWD/infrastructure/docker/prometheus:/etc/prometheus --entrypoint promtool prom/prometheus:latest check config /etc/prometheus/prometheus.yml
     
     - name: Validate Grafana provisioning
       run: |
