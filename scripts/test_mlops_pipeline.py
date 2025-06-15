@@ -7,7 +7,6 @@ Tests training, validation, and deployment workflow
 import json
 import logging
 import time
-from datetime import datetime
 from pathlib import Path
 
 # Setup logging
@@ -242,11 +241,7 @@ if __name__ == "__main__":
         # For CI/CD: Just validate that the pipeline script exists and dependencies work
         print("🏥 Validating MLOps pipeline health check...")
         try:
-            import json
-            from pathlib import Path
-
-            import joblib
-            import sklearn
+            import sklearn  # noqa: F401
 
             print("✅ MLOps pipeline health check: PASSED")
             print("   - Required dependencies available")

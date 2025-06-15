@@ -56,13 +56,6 @@ def test_core_services() -> List[bool]:
     """Test all core MLOps services"""
     print("=== Testing Core MLOps Services ===")
 
-    services = [
-        ("MLflow", 5050, "/"),
-        ("MinIO Console", 9001, "/"),
-        ("PostgreSQL", 5432, None),  # No HTTP endpoint
-        ("Redis", 6379, None),  # No HTTP endpoint
-    ]
-
     results = []
 
     # Test MLflow
@@ -74,7 +67,7 @@ def test_core_services() -> List[bool]:
         else:
             print("✗ MLflow not accessible")
             results.append(False)
-    except:
+    except Exception:
         print("✗ MLflow connection failed")
         results.append(False)
 
@@ -87,7 +80,7 @@ def test_core_services() -> List[bool]:
         else:
             print("✗ MinIO Console not accessible")
             results.append(False)
-    except:
+    except Exception:
         print("✗ MinIO Console connection failed")
         results.append(False)
 
@@ -99,7 +92,7 @@ def test_core_services() -> List[bool]:
         r.ping()
         print("✓ Redis is accessible")
         results.append(True)
-    except:
+    except Exception:
         print("✗ Redis connection failed")
         results.append(False)
 
@@ -117,7 +110,7 @@ def test_core_services() -> List[bool]:
         conn.close()
         print("✓ PostgreSQL is accessible")
         results.append(True)
-    except:
+    except Exception:
         print("✗ PostgreSQL connection failed")
         results.append(False)
 
@@ -171,7 +164,7 @@ def test_monitoring_integration() -> List[bool]:
         else:
             print("✗ Prometheus not responding")
             results.append(False)
-    except:
+    except Exception:
         print("✗ Prometheus connection failed")
         results.append(False)
 
@@ -184,7 +177,7 @@ def test_monitoring_integration() -> List[bool]:
         else:
             print("✗ Grafana not accessible")
             results.append(False)
-    except:
+    except Exception:
         print("✗ Grafana connection failed")
         results.append(False)
 
@@ -197,7 +190,7 @@ def test_monitoring_integration() -> List[bool]:
         else:
             print("✗ Alertmanager not accessible")
             results.append(False)
-    except:
+    except Exception:
         print("✗ Alertmanager connection failed")
         results.append(False)
 
@@ -226,7 +219,7 @@ def test_service_metrics() -> List[bool]:
             else:
                 print(f"✗ {service_name} metrics not available")
                 results.append(False)
-        except:
+        except Exception:
             print(f"✗ {service_name} metrics endpoint failed")
             results.append(False)
 
@@ -279,8 +272,8 @@ def main():
 
     # Install required packages if needed
     try:
-        import psycopg2
-        import redis
+        import psycopg2  # noqa: F401
+        import redis  # noqa: F401
     except ImportError:
         print("Installing required packages...")
         import subprocess
@@ -289,8 +282,7 @@ def main():
         subprocess.check_call(
             [sys.executable, "-m", "pip", "install", "redis", "psycopg2-binary"]
         )
-        import psycopg2
-        import redis
+        # Dependencies now available for individual test functions
 
     # Run all tests
     test_results = []
