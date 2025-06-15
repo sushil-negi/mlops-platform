@@ -3,6 +3,7 @@ Feature Store 2.0 - Real-time Feature Management Platform
 Centralized feature repository with versioning, lineage, and serving
 """
 
+import asyncio
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -23,8 +24,26 @@ async def lifespan(app: FastAPI):
     """Manage application lifecycle"""
     logger.info("Starting Feature Store 2.0...")
 
-    # Initialize database
-    await init_db()
+    # Initialize database with retry logic
+    max_retries = 10
+    retry_delay = 2
+
+    for attempt in range(max_retries):
+        try:
+            await init_db()
+            break
+        except Exception as e:
+            if attempt == max_retries - 1:
+                logger.error(
+                    f"Failed to initialize database after {max_retries} attempts: {e}"
+                )
+                raise
+            logger.warning(
+                f"Database initialization attempt {attempt + 1} failed: {e}. "
+                f"Retrying in {retry_delay}s..."
+            )
+            await asyncio.sleep(retry_delay)
+            retry_delay = min(retry_delay * 2, 30)  # Cap at 30 seconds
 
     # Initialize feature storage
     from storage.feature_storage import FeatureStorage
