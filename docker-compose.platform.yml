@@ -3,7 +3,9 @@ version: '3.8'
 services:
   # Model Registry Service
   model-registry:
-    build: ./services/model-registry
+    build: 
+      context: ./services/model-registry
+      dockerfile: Dockerfile.simple
     ports:
       - "8000:8000"
     environment:
