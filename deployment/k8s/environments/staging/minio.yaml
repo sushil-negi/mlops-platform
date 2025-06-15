@@ -5,10 +5,11 @@ metadata:
   namespace: healthcare-ai-staging
 type: Opaque
 data:
+  # STAGING ENVIRONMENT: Use staging-appropriate credentials
   # echo -n 'minioadmin' | base64
   username: bWluaW9hZG1pbg==
-  # echo -n 'minioadmin123' | base64
-  password: bWluaW9hZG1pbjEyMw==
+  # echo -n 'staging123' | base64
+  password: c3RhZ2luZzEyMw==
 
 ---
 apiVersion: apps/v1

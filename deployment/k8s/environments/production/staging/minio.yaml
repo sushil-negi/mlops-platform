@@ -5,10 +5,11 @@ metadata:
   namespace: healthcare-ai-production
 type: Opaque
 data:
-  # echo -n 'minioadmin' | base64
-  username: bWluaW9hZG1pbg==
-  # echo -n 'minioadmin123' | base64
-  password: bWluaW9hZG1pbjEyMw==
+  # IMPORTANT: Update these with actual production secrets before deployment
+  # Example: echo -n 'production-username' | base64
+  username: PLEASE_UPDATE_PRODUCTION_MINIO_USERNAME_BASE64
+  # Example: echo -n 'secure-production-password' | base64  
+  password: PLEASE_UPDATE_PRODUCTION_MINIO_PASSWORD_BASE64
 
 ---
 apiVersion: apps/v1

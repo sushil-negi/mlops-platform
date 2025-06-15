@@ -5,10 +5,11 @@ metadata:
   namespace: healthcare-ai-dev
 type: Opaque
 data:
+  # DEV ENVIRONMENT: These can be simple values for development
   # echo -n 'minioadmin' | base64
   username: bWluaW9hZG1pbg==
-  # echo -n 'minioadmin123' | base64
-  password: bWluaW9hZG1pbjEyMw==
+  # echo -n 'dev123' | base64
+  password: ZGV2MTIz
 
 ---
 apiVersion: apps/v1
