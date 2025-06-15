@@ -7,7 +7,7 @@ from functools import lru_cache
 from typing import List
 
 from pydantic import Field, validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -33,10 +33,18 @@ class Settings(BaseSettings):
     REDIS_TTL: int = Field(default=3600, env="REDIS_TTL")  # 1 hour
 
     # Storage settings (MinIO/S3)
-    STORAGE_ENDPOINT: str = Field(..., env="MINIO_ENDPOINT")
-    STORAGE_ACCESS_KEY: str = Field(..., env="MINIO_ACCESS_KEY")
-    STORAGE_SECRET_KEY: str = Field(..., env="MINIO_SECRET_KEY")
-    STORAGE_SECURE: bool = Field(default=False, env="MINIO_SECURE")
+    STORAGE_ENDPOINT: str = Field(
+        default_factory=lambda: os.getenv("MINIO_ENDPOINT", "")
+    )
+    STORAGE_ACCESS_KEY: str = Field(
+        default_factory=lambda: os.getenv("MINIO_ACCESS_KEY", "")
+    )
+    STORAGE_SECRET_KEY: str = Field(
+        default_factory=lambda: os.getenv("MINIO_SECRET_KEY", "")
+    )
+    STORAGE_SECURE: bool = Field(
+        default_factory=lambda: os.getenv("MINIO_SECURE", "false").lower() == "true"
+    )
     STORAGE_BUCKET_MODELS: str = Field(default="models", env="STORAGE_BUCKET_MODELS")
     STORAGE_BUCKET_ARTIFACTS: str = Field(
         default="artifacts", env="STORAGE_BUCKET_ARTIFACTS"
@@ -84,10 +92,7 @@ class Settings(BaseSettings):
             raise ValueError(f"LOG_LEVEL must be one of {valid_levels}")
         return v.upper()
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 class DevelopmentSettings(Settings):

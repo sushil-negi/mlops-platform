@@ -89,7 +89,7 @@ class ModelVersion(Base):
 
     # Metadata and tags
     tags = Column(JSON, default=list)
-    metadata = Column(JSON, default=dict)
+    extra_metadata = Column(JSON, default=dict)
 
     # Audit information
     created_by = Column(String(255), nullable=False)

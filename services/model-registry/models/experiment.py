@@ -77,7 +77,7 @@ class Experiment(Base):
 
     # Tags and metadata
     tags = Column(JSON, default=list)
-    metadata = Column(JSON, default=dict)
+    extra_metadata = Column(JSON, default=dict)
 
     # Audit information
     created_by = Column(String(255), nullable=False)

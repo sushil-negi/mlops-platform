@@ -64,7 +64,7 @@ class Artifact(Base):
     # Metadata and properties
     properties = Column(JSON, default=dict)  # Artifact-specific properties
     tags = Column(JSON, default=list)  # Tags for categorization
-    metadata = Column(JSON, default=dict)  # Additional metadata
+    extra_metadata = Column(JSON, default=dict)  # Additional metadata
 
     # Access and permissions
     is_public = Column(

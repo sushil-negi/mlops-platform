@@ -59,7 +59,7 @@ class Model(Base):
 
     # Metadata
     tags = Column(JSON, default=list)  # List of tags for categorization
-    metadata = Column(JSON, default=dict)  # Additional custom metadata
+    extra_metadata = Column(JSON, default=dict)  # Additional custom metadata
 
     # Ownership and governance
     created_by = Column(String(255), nullable=False)

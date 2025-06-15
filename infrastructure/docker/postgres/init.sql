@@ -15,33 +15,8 @@ GRANT ALL PRIVILEGES ON DATABASE feature_store TO mlops;
 GRANT ALL PRIVILEGES ON DATABASE pipeline_orchestrator TO mlops;
 GRANT ALL PRIVILEGES ON DATABASE ab_testing TO mlops;
 
--- Initialize Model Registry database
+-- Model Registry tables will be created by SQLAlchemy migrations
 \c model_registry;
-
-CREATE TABLE IF NOT EXISTS models (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    version VARCHAR(100) NOT NULL,
-    description TEXT,
-    status VARCHAR(50) DEFAULT 'draft',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    metadata JSONB,
-    artifact_path TEXT,
-    performance_metrics JSONB,
-    UNIQUE(name, version)
-);
-
-CREATE TABLE IF NOT EXISTS deployments (
-    id SERIAL PRIMARY KEY,
-    model_id INTEGER REFERENCES models(id),
-    environment VARCHAR(50) NOT NULL,
-    status VARCHAR(50) DEFAULT 'pending',
-    endpoint_url TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    config JSONB
-);
 
 -- Initialize Pipeline Orchestrator database
 \c pipeline_orchestrator;
@@ -68,21 +43,11 @@ CREATE TABLE IF NOT EXISTS pipeline_runs (
 );
 
 -- Create indexes for better performance
-\c model_registry;
-CREATE INDEX IF NOT EXISTS idx_models_name_version ON models(name, version);
-CREATE INDEX IF NOT EXISTS idx_deployments_model_env ON deployments(model_id, environment);
 
 \c pipeline_orchestrator;
 CREATE INDEX IF NOT EXISTS idx_pipeline_runs_status ON pipeline_runs(status);
 
--- Insert sample data in Model Registry
-\c model_registry;
-INSERT INTO models (name, version, description, status, metadata, performance_metrics) 
-VALUES 
-    ('demo-llm', '1.0.0', 'Demo Language Model for MLOps showcase', 'production', 
-     '{"architecture": "GPT-2", "parameters": "124M", "training_data": "demo_dataset"}',
-     '{"accuracy": 0.95, "latency_ms": 100, "throughput_rps": 10}')
-ON CONFLICT (name, version) DO NOTHING;
+-- Sample data will be managed by the Model Registry service
 
 -- Insert sample data in Pipeline Orchestrator
 \c pipeline_orchestrator;
