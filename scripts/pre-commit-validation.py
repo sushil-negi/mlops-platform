@@ -4,15 +4,15 @@ Comprehensive Pre-Commit Validation Script
 Mimics the full CI/CD pipeline for local testing before commits
 """
 
-import os
-import sys
-import subprocess
 import json
-import time
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional
-from dataclasses import dataclass
+import os
+import subprocess
+import sys
 import tempfile
+import time
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 
 @dataclass
