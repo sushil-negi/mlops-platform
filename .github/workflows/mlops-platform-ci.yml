@@ -237,13 +237,21 @@ jobs:
       run: |
         cat > .env << EOF
         POSTGRES_PASSWORD=test123
+        MINIO_ROOT_USER=minioadmin
         MINIO_ROOT_PASSWORD=test123456
         GRAFANA_ADMIN_PASSWORD=test123
         EOF
     
     - name: Start MLOps Platform services
       run: |
+        # Debug: Show environment file
+        echo "Environment file contents:"
+        cat .env
+        
+        # Start services
         docker compose -f docker-compose.platform.yml up -d
+        
+        # Wait for services to start
         sleep 180  # Extended wait for all services to initialize and build
     
     - name: Wait for infrastructure services
@@ -283,8 +291,10 @@ jobs:
           done
           
           echo "✗ $service_name failed to become healthy after $max_attempts attempts"
+          echo "Container environment variables:"
+          docker compose -f docker-compose.platform.yml exec -T $service_name env | grep -E "(MINIO|DATABASE|REDIS|STORAGE)" || echo "Container not running to check env"
           echo "Container logs for $service_name:"
-          docker compose -f docker-compose.platform.yml logs --tail=20 $service_name
+          docker compose -f docker-compose.platform.yml logs --tail=30 $service_name
           return 1
         }
         
