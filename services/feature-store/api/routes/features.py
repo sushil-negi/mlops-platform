@@ -54,7 +54,7 @@ class FeatureResponse(BaseModel):
     feature_set_id: str
     description: Optional[str]
     data_type: str
-    default_value: Optional[any]
+    default_value: Optional[Any]
     transformation: Optional[str]
     aggregations: List[str]
     window_size: Optional[str]

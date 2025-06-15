@@ -25,7 +25,7 @@ def setup_logging() -> logging.Logger:
             structlog.processors.StackInfoRenderer(),
             structlog.processors.format_exc_info,
             structlog.processors.UnicodeDecoder(),
-            structlog.processors.CallsiteParameter(),
+            # structlog.processors.CallsiteParameter(),  # Removed due to compatibility
             structlog.processors.dict_tracebacks,
             (
                 structlog.processors.JSONRenderer()
