@@ -250,7 +250,7 @@ jobs:
         echo "Waiting for PostgreSQL..."
         timeout 300 bash -c 'until PGPASSWORD=test123 pg_isready -h localhost -U mlops -d mlops_platform; do sleep 5; done'
         echo "Waiting for Redis..."
-        timeout 300 bash -c 'until redis-cli -h localhost ping; do sleep 5; done'
+        timeout 300 bash -c 'until docker run --rm --network host redis:7-alpine redis-cli -h localhost ping; do sleep 5; done'
         echo "Waiting for MinIO..."
         timeout 300 bash -c 'until curl -f http://localhost:9000/minio/health/live; do sleep 5; done'
         echo "Infrastructure services are ready!"

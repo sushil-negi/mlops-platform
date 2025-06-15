@@ -82,7 +82,7 @@ timeout 300 bash -c 'until PGPASSWORD=test123 pg_isready -h localhost -U mlops -
 print_success "PostgreSQL is ready"
 
 echo "  Checking Redis..."
-timeout 300 bash -c 'until redis-cli -h localhost ping > /dev/null 2>&1; do sleep 5; done' || {
+timeout 300 bash -c 'until docker compose -f docker-compose.platform.yml exec -T redis redis-cli ping > /dev/null 2>&1; do sleep 5; done' || {
     print_error "Redis failed to start"
     docker compose -f docker-compose.platform.yml logs redis
     exit 1

@@ -64,7 +64,7 @@ fi
 
 # Test Redis
 print_status "Testing Redis..."
-if redis-cli -h localhost ping > /dev/null 2>&1; then
+if docker exec test-redis redis-cli ping > /dev/null 2>&1; then
     print_success "Redis is working"
 else
     print_error "Redis failed"
