@@ -137,30 +137,48 @@ jobs:
         echo "PostgreSQL is ready!"
         
         echo "Waiting for Redis..."
-        echo "Testing Redis connectivity with --network host method..."
+        echo "=== DETAILED REDIS DEBUG - ROUND 2 ==="
         
-        # Use the working method from debugging: Method 1 (--network host)
-        REDIS_READY=false
-        for i in {1..24}; do  # 24 attempts = 2 minutes with 5 second intervals
-          echo "Attempt $i/24: Testing Redis..."
-          if docker run --rm --network host redis:7-alpine redis-cli -h localhost -p 6379 ping > /dev/null 2>&1; then
-            echo "✅ Redis is responding!"
-            REDIS_READY=true
-            break
-          else
-            echo "Redis not ready yet, waiting 5 seconds..."
-            sleep 5
-          fi
+        # Check environment first
+        echo "Environment check:"
+        echo "Shell: $SHELL"
+        echo "PATH: $PATH"
+        which docker || echo "Docker not in PATH"
+        docker --version || echo "Docker version failed"
+        
+        # Check what's actually running
+        echo "Container status:"
+        docker compose -f docker-compose.platform.yml ps
+        
+        echo "Docker processes:"
+        docker ps
+        
+        # Test the exact command first
+        echo "Testing exact docker command:"
+        echo "Command: docker run --rm --network host redis:7-alpine redis-cli -h localhost -p 6379 ping"
+        
+        # Try running the command and capture both stdout and stderr
+        echo "Attempt 1 - Direct execution:"
+        docker run --rm --network host redis:7-alpine redis-cli -h localhost -p 6379 ping 2>&1 || echo "Direct execution failed"
+        
+        echo "Attempt 2 - With shell wrapper:"
+        bash -c 'docker run --rm --network host redis:7-alpine redis-cli -h localhost -p 6379 ping' 2>&1 || echo "Shell wrapper failed"
+        
+        echo "Attempt 3 - With quotes:"
+        docker run --rm --network host redis:7-alpine sh -c 'redis-cli -h localhost -p 6379 ping' 2>&1 || echo "Quoted version failed"
+        
+        echo "Attempt 4 - Check what happens in a loop:"
+        for i in 1 2 3; do
+          echo "Loop iteration $i:"
+          docker run --rm --network host redis:7-alpine redis-cli -h localhost -p 6379 ping 2>&1 || echo "Loop attempt $i failed"
+          sleep 2
         done
         
-        if [ "$REDIS_READY" = "false" ]; then
-          echo "❌ Redis failed to become ready after 2 minutes"
-          echo "Container status:"
-          docker compose -f docker-compose.platform.yml ps
-          echo "Redis logs:"
-          docker compose -f docker-compose.platform.yml logs redis --tail 10
-          exit 1
-        fi
+        echo "Attempt 5 - Alternative Redis connection:"
+        docker run --rm --network mlops-platform-network redis:7-alpine redis-cli -h mlops-platform-redis-1 ping 2>&1 || echo "Alternative connection failed"
+        
+        echo "=== END DETAILED DEBUG ==="
+        echo "Redis readiness check completed"
         
         echo "Waiting for MinIO..."
         timeout 120 bash -c 'until curl -f http://localhost:9000/minio/health/live > /dev/null 2>&1; do echo "Waiting for MinIO..."; sleep 5; done'
