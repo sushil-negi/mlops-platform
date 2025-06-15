@@ -6,8 +6,7 @@ import logging
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from core.dag import (Pipeline, ResourceRequirements, RetryPolicy, Task,
-                      TriggerType)
+from core.dag import Pipeline, ResourceRequirements, RetryPolicy, Task, TriggerType
 from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
 
