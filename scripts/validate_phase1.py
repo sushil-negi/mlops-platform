@@ -87,7 +87,8 @@ def test_healthcare_ai_service():
             result = engine.generate_response(query)
             if result.get("category") != expected_category:
                 print(
-                    f"   Category mismatch: {query} -> {result.get('category')} (expected {expected_category})"
+                    f"   Category mismatch: {query} -> "
+                    f"{result.get('category')} (expected {expected_category})"
                 )
                 return False
 
@@ -140,8 +141,10 @@ def test_data_drift_detector():
 def test_monitoring_dashboards():
     """Test monitoring dashboard configs"""
     dashboards = [
-        "infrastructure/docker/grafana/provisioning/dashboards/healthcare-ai-dashboard.json",
-        "infrastructure/docker/grafana/provisioning/dashboards/model-performance-dashboard.json",
+        "infrastructure/docker/grafana/provisioning/dashboards/"
+        "healthcare-ai-dashboard.json",
+        "infrastructure/docker/grafana/provisioning/dashboards/"
+        "model-performance-dashboard.json",
     ]
 
     for dashboard_path in dashboards:
@@ -227,7 +230,9 @@ def generate_validation_report(results):
         "total_tests": len(results),
         "passed": sum(1 for r in results.values() if r),
         "failed": sum(1 for r in results.values() if not r),
-        "success_rate": f"{sum(1 for r in results.values() if r) / len(results) * 100:.1f}%",
+        "success_rate": (
+            f"{sum(1 for r in results.values() if r) / len(results) * 100:.1f}%"
+        ),
         "test_results": results,
         "overall_status": "PASSED" if all(results.values()) else "FAILED",
     }
@@ -262,7 +267,7 @@ def main():
     report = generate_validation_report(results)
 
     # Print summary
-    print(f"📊 VALIDATION SUMMARY")
+    print("📊 VALIDATION SUMMARY")
     print(f"   Total Tests: {report['total_tests']}")
     print(f"   Passed: {report['passed']}")
     print(f"   Failed: {report['failed']}")
@@ -273,7 +278,7 @@ def main():
     with open("phase1_validation_report.json", "w") as f:
         json.dump(report, f, indent=2)
 
-    print(f"\n📄 Detailed report saved to: phase1_validation_report.json")
+    print("\n📄 Detailed report saved to: phase1_validation_report.json")
 
     if report["overall_status"] == "PASSED":
         print("\n🎉 Phase 1 validation PASSED! Ready for Phase 2.")

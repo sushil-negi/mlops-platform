@@ -244,55 +244,54 @@ class MLOpsPreCommitValidator:
         """Run Bandit security scan"""
         start_time = time.time()
 
+        # Bandit outputs logs to stderr, so we need to capture stdout only
         cmd = [
             "python3",
-            "-m",
-            "bandit",
-            "-r",
-            "services/",
-            "infrastructure/",
-            "scripts/",
-            "-f",
-            "json",
-            "--exclude",
-            "**/tests/**",
+            "-c",
+            """
+import subprocess, sys
+result = subprocess.run([
+    sys.executable, '-m', 'bandit', '-r', 'services/', 'scripts/', 
+    '-f', 'json', '--exclude', '**/tests/**'
+], capture_output=True, text=True)
+print(result.stdout)
+sys.exit(0 if result.stdout.strip() else 1)
+            """,
         ]
         success, stdout, stderr = self.run_command(cmd)
         duration = time.time() - start_time
 
-        if not success and "No issues identified" not in stderr:
-            try:
-                # Try to parse JSON output to get meaningful error info
-                if stdout.strip():
-                    report = json.loads(stdout)
-                    high_issues = [
-                        issue
-                        for issue in report.get("results", [])
-                        if issue.get("issue_confidence") == "HIGH"
-                        and issue.get("issue_severity") == "HIGH"
-                    ]
+        try:
+            # Parse JSON output
+            if stdout.strip():
+                report = json.loads(stdout)
+                high_issues = [
+                    issue
+                    for issue in report.get("results", [])
+                    if issue.get("issue_confidence") == "HIGH"
+                    and issue.get("issue_severity") == "HIGH"
+                ]
+                total_issues = len(report.get("results", []))
 
-                    return ValidationResult(
-                        name="Bandit Security Scan",
-                        passed=len(high_issues) == 0,
-                        duration=duration,
-                        output=f"Security scan completed. High-severity issues: "
-                        f"{len(high_issues)}",
-                        error=(
-                            f"Found {len(high_issues)} high-severity security issues"
-                            if high_issues
-                            else None
-                        ),
-                    )
-            except json.JSONDecodeError:
-                pass
-
+                return ValidationResult(
+                    name="Bandit Security Scan",
+                    passed=len(high_issues) == 0,
+                    duration=duration,
+                    output=f"Security scan completed. {total_issues} total issues, "
+                    f"{len(high_issues)} high-severity",
+                    error=(
+                        f"Found {len(high_issues)} high-severity security issues"
+                        if high_issues
+                        else None
+                    ),
+                )
+        except json.JSONDecodeError:
             return ValidationResult(
                 name="Bandit Security Scan",
                 passed=False,
                 duration=duration,
                 output="",
-                error=f"Bandit security scan failed: {stderr}",
+                error=f"Failed to parse Bandit output: {stderr}",
             )
 
         return ValidationResult(

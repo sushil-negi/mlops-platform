@@ -117,7 +117,7 @@ def is_safe_match(match_text: str) -> bool:
 
 def scan_file_for_secrets(file_path: str) -> List[Tuple[int, str, str]]:
     """Scan a file for potential secrets"""
-    issues = []
+    issues: List[Tuple[int, str, str]] = []
 
     try:
         with open(file_path, "r", encoding="utf-8") as f:

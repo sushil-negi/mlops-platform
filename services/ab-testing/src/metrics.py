@@ -275,12 +275,34 @@ class ExperimentMetrics:
 
                 # Define queries for real-time metrics
                 queries = {
-                    "requests_per_second_a": f'rate(ab_test_requests_total{{experiment_id="{experiment_id}",model="control"}}[1m])',
-                    "requests_per_second_b": f'rate(ab_test_requests_total{{experiment_id="{experiment_id}",model="treatment"}}[1m])',
-                    "error_rate_a": f'rate(ab_test_errors_total{{experiment_id="{experiment_id}",model="control"}}[5m])',
-                    "error_rate_b": f'rate(ab_test_errors_total{{experiment_id="{experiment_id}",model="treatment"}}[5m])',
-                    "avg_response_time_a": f'rate(ab_test_response_time_seconds_sum{{experiment_id="{experiment_id}",model="control"}}[5m]) / rate(ab_test_response_time_seconds_count{{experiment_id="{experiment_id}",model="control"}}[5m])',
-                    "avg_response_time_b": f'rate(ab_test_response_time_seconds_sum{{experiment_id="{experiment_id}",model="treatment"}}[5m]) / rate(ab_test_response_time_seconds_count{{experiment_id="{experiment_id}",model="treatment"}}[5m])',
+                    "requests_per_second_a": (
+                        f"rate(ab_test_requests_total{{"
+                        f'experiment_id="{experiment_id}",model="control"}}[1m])'
+                    ),
+                    "requests_per_second_b": (
+                        f"rate(ab_test_requests_total{{"
+                        f'experiment_id="{experiment_id}",model="treatment"}}[1m])'
+                    ),
+                    "error_rate_a": (
+                        f"rate(ab_test_errors_total{{"
+                        f'experiment_id="{experiment_id}",model="control"}}[5m])'
+                    ),
+                    "error_rate_b": (
+                        f"rate(ab_test_errors_total{{"
+                        f'experiment_id="{experiment_id}",model="treatment"}}[5m])'
+                    ),
+                    "avg_response_time_a": (
+                        f"rate(ab_test_response_time_seconds_sum{{"
+                        f'experiment_id="{experiment_id}",model="control"}}[5m]) / '
+                        f"rate(ab_test_response_time_seconds_count{{"
+                        f'experiment_id="{experiment_id}",model="control"}}[5m])'
+                    ),
+                    "avg_response_time_b": (
+                        f"rate(ab_test_response_time_seconds_sum{{"
+                        f'experiment_id="{experiment_id}",model="treatment"}}[5m]) / '
+                        f"rate(ab_test_response_time_seconds_count{{"
+                        f'experiment_id="{experiment_id}",model="treatment"}}[5m])'
+                    ),
                 }
 
                 for metric_name, query in queries.items():
