@@ -3,6 +3,7 @@ Cirruslabs MLOps - Model Registry Service
 Main application entry point
 """
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 
@@ -27,9 +28,29 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager"""
     # Startup
     logger.info("Starting Model Registry Service")
-    await database.connect()
-    await init_db()
-    logger.info("Model Registry Service started successfully")
+
+    # Retry database connection with exponential backoff
+    max_retries = 10
+    retry_delay = 2
+
+    for attempt in range(max_retries):
+        try:
+            await database.connect()
+            await init_db()
+            logger.info("Model Registry Service started successfully")
+            break
+        except Exception as e:
+            if attempt == max_retries - 1:
+                logger.error(
+                    f"Failed to connect to database after {max_retries} attempts: {e}"
+                )
+                raise
+            logger.warning(
+                f"Database connection attempt {attempt + 1} failed: {e}. "
+                f"Retrying in {retry_delay}s..."
+            )
+            await asyncio.sleep(retry_delay)
+            retry_delay = min(retry_delay * 2, 30)  # Cap at 30 seconds
 
     yield
 
