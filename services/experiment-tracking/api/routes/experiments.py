@@ -8,18 +8,11 @@ from datetime import datetime
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, HTTPException, Query, status
-from models.experiment import (
-    EXPERIMENT_TEMPLATES,
-    ExperimentComparison,
-    ExperimentCreate,
-    ExperimentListResponse,
-    ExperimentMetrics,
-    ExperimentResponse,
-    ExperimentStatus,
-    ExperimentSummary,
-    ExperimentType,
-    ExperimentUpdate,
-)
+from models.experiment import (EXPERIMENT_TEMPLATES, ExperimentComparison,
+                               ExperimentCreate, ExperimentListResponse,
+                               ExperimentMetrics, ExperimentResponse,
+                               ExperimentStatus, ExperimentSummary,
+                               ExperimentType, ExperimentUpdate)
 from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)

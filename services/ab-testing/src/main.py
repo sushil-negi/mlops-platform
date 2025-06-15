@@ -18,7 +18,8 @@ from prometheus_client.core import CollectorRegistry
 
 try:
     from .metrics import ExperimentMetrics
-    from .models import Experiment, ExperimentConfig, ExperimentStatus, RoutingDecision
+    from .models import (Experiment, ExperimentConfig, ExperimentStatus,
+                         RoutingDecision)
     from .safety_monitor import SafetyMonitor
     from .statistics import ABTestAnalyzer
 except ImportError:
@@ -26,9 +27,9 @@ except ImportError:
     from statistics import ABTestAnalyzer
 
     from metrics import ExperimentMetrics
+    from models import (Experiment, ExperimentConfig, ExperimentStatus,
+                        RoutingDecision)
     from safety_monitor import SafetyMonitor
-
-    from models import Experiment, ExperimentConfig, ExperimentStatus, RoutingDecision
 
 # Configure structured logging
 structlog.configure(

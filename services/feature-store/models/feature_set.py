@@ -8,19 +8,9 @@ from typing import Dict, List
 from uuid import uuid4
 
 from core.database import Base
-from sqlalchemy import (
-    JSON,
-    Boolean,
-    Column,
-    DateTime,
-)
+from sqlalchemy import JSON, Boolean, Column, DateTime
 from sqlalchemy import Enum as SQLEnum
-from sqlalchemy import (
-    Index,
-    Integer,
-    String,
-    Text,
-)
+from sqlalchemy import Index, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 from sqlalchemy.orm import relationship
 
