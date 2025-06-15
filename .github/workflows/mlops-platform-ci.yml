@@ -167,15 +167,31 @@ jobs:
     - name: Start MLOps Platform services
       run: |
         docker compose -f docker-compose.platform.yml up -d
-        sleep 60  # Wait for services to initialize
+        sleep 120  # Extended wait for all services to initialize
     
-    - name: Wait for services to be healthy
+    - name: Wait for infrastructure services
       run: |
+        echo "Waiting for PostgreSQL..."
+        timeout 300 bash -c 'until PGPASSWORD=test123 pg_isready -h localhost -U mlops -d mlops_platform; do sleep 5; done'
+        echo "Waiting for Redis..."
+        timeout 300 bash -c 'until redis-cli -h localhost ping; do sleep 5; done'
+        echo "Waiting for MinIO..."
+        timeout 300 bash -c 'until curl -f http://localhost:9000/minio/health/live; do sleep 5; done'
+        echo "Infrastructure services are ready!"
+    
+    - name: Wait for application services to be healthy
+      run: |
+        echo "Waiting for Model Registry..."
         timeout 300 bash -c 'until curl -f http://localhost:8000/health; do sleep 5; done'
+        echo "Waiting for Experiment Tracking..."
         timeout 300 bash -c 'until curl -f http://localhost:8003/health; do sleep 5; done'
+        echo "Waiting for Feature Store..."
         timeout 300 bash -c 'until curl -f http://localhost:8002/health; do sleep 5; done'
+        echo "Waiting for Pipeline Orchestrator..."
         timeout 300 bash -c 'until curl -f http://localhost:8004/health; do sleep 5; done'
+        echo "Waiting for A/B Testing..."
         timeout 300 bash -c 'until curl -f http://localhost:8090/health; do sleep 5; done'
+        echo "All application services are healthy!"
     
     - name: Run integration tests
       run: |
@@ -199,10 +215,18 @@ jobs:
         curl -f http://localhost:9090/-/healthy  # Prometheus
         curl -f http://localhost:3000/api/health # Grafana
     
-    - name: Collect service logs
+    - name: Collect service logs on failure
       if: failure()
       run: |
-        docker compose -f docker-compose.platform.yml logs > platform-logs.txt
+        echo "=== Docker Compose Services Status ==="
+        docker compose -f docker-compose.platform.yml ps
+        echo "=== Service Logs ==="
+        docker compose -f docker-compose.platform.yml logs --tail=50 > platform-logs.txt
+        echo "=== Individual Service Status ==="
+        docker compose -f docker-compose.platform.yml logs model-registry --tail=20
+        docker compose -f docker-compose.platform.yml logs postgres --tail=10
+        docker compose -f docker-compose.platform.yml logs redis --tail=10
+        docker compose -f docker-compose.platform.yml logs minio --tail=10
     
     - name: Upload logs artifact
       if: failure()
