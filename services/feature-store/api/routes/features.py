@@ -3,7 +3,7 @@ Feature management API endpoints
 """
 
 import logging
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -25,7 +25,7 @@ class FeatureCreate(BaseModel):
     feature_set_id: str
     description: Optional[str] = None
     data_type: FeatureType
-    default_value: Optional[any] = None
+    default_value: Optional[Any] = None
     transformation: Optional[str] = None
     aggregations: Optional[List[str]] = []
     window_size: Optional[str] = None
@@ -37,7 +37,7 @@ class FeatureUpdate(BaseModel):
     """Request model for updating a feature"""
 
     description: Optional[str] = None
-    default_value: Optional[any] = None
+    default_value: Optional[Any] = None
     transformation: Optional[str] = None
     aggregations: Optional[List[str]] = None
     window_size: Optional[str] = None

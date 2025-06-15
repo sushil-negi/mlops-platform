@@ -3,9 +3,9 @@ Serving request models for Feature Store
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ServingRequest(BaseModel):
@@ -19,14 +19,15 @@ class ServingRequest(BaseModel):
         None, description="Specific features to retrieve"
     )
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "feature_sets": ["user_profile", "user_activity"],
                 "entities": {"user": ["user_123", "user_456"]},
                 "features": ["age", "total_purchases", "last_login"],
             }
         }
+    )
 
 
 class PointInTimeRequest(BaseModel):
@@ -41,8 +42,8 @@ class PointInTimeRequest(BaseModel):
         "event_timestamp", description="Timestamp column name"
     )
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "feature_sets": ["user_profile", "user_activity"],
                 "entity_df": {
@@ -56,6 +57,7 @@ class PointInTimeRequest(BaseModel):
                 "timestamp_column": "event_timestamp",
             }
         }
+    )
 
 
 class BatchServingRequest(BaseModel):
@@ -74,8 +76,8 @@ class BatchServingRequest(BaseModel):
         None, description="End date for historical features"
     )
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "feature_sets": ["user_profile", "user_activity"],
                 "entity_source": "s3://data/entities/users.parquet",
@@ -85,18 +87,19 @@ class BatchServingRequest(BaseModel):
                 "end_date": "2024-01-31T23:59:59",
             }
         }
+    )
 
 
 class FeatureServingResponse(BaseModel):
     """Response model for feature serving"""
 
-    features: Dict[str, Dict[str, any]] = Field(
+    features: Dict[str, Dict[str, Any]] = Field(
         ..., description="Entity ID to features mapping"
     )
     metadata: Dict = Field(default_factory=dict, description="Response metadata")
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "features": {
                     "user_123": {
@@ -118,3 +121,4 @@ class FeatureServingResponse(BaseModel):
                 },
             }
         }
+    )

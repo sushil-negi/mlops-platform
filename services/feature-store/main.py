@@ -35,7 +35,8 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             if attempt == max_retries - 1:
                 logger.error(
-                    f"Failed to initialize database after {max_retries} attempts: {e}"
+                    f"Failed to initialize database after {max_retries} "
+                    f"attempts: {e}"
                 )
                 raise
             logger.warning(
@@ -46,18 +47,36 @@ async def lifespan(app: FastAPI):
             retry_delay = min(retry_delay * 2, 30)  # Cap at 30 seconds
 
     # Initialize feature storage
-    from storage.feature_storage import FeatureStorage
+    try:
+        from storage.feature_storage import FeatureStorage
 
-    storage = FeatureStorage()
-    await storage.initialize()
-    app.state.storage = storage
+        logger.info("FeatureStorage imported successfully")
+
+        storage = FeatureStorage()
+        logger.info("FeatureStorage instance created")
+
+        await storage.initialize()
+        app.state.storage = storage
+        logger.info("FeatureStorage initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize FeatureStorage: {e}")
+        raise
 
     # Initialize serving engine
-    from core.serving_engine import ServingEngine
+    try:
+        from core.serving_engine import ServingEngine
 
-    serving_engine = ServingEngine(storage)
-    await serving_engine.start()
-    app.state.serving_engine = serving_engine
+        logger.info("ServingEngine imported successfully")
+
+        serving_engine = ServingEngine(storage)
+        logger.info("ServingEngine instance created")
+
+        await serving_engine.start()
+        app.state.serving_engine = serving_engine
+        logger.info("ServingEngine started successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize ServingEngine: {e}")
+        raise
 
     logger.info("Feature Store 2.0 started successfully")
 

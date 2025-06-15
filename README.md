@@ -350,6 +350,28 @@ make dev-up
 make test-all
 ```
 
+## 🔧 **Troubleshooting**
+
+### **Common Issues**
+
+#### **Redis Connection Failures in Kubernetes**
+If you see errors like `redis-cli: command not found` or `Waiting for Redis...` in init containers:
+
+1. **Verify Redis is deployed**: Check if Redis deployment exists in your namespace
+   ```bash
+   kubectl get deployment redis -n <your-namespace>
+   ```
+
+2. **Deploy Redis if missing**: Apply the Redis manifest
+   ```bash
+   kubectl apply -f deployment/k8s/environments/<env>/redis.yaml
+   ```
+
+3. **Verify Redis service**: Ensure the service is accessible
+   ```bash
+   kubectl run redis-test --rm -it --image=redis:7-alpine --restart=Never -n <your-namespace> -- redis-cli -h redis ping
+   ```
+
 ## 📄 **License & Legal**
 
 This MLOps platform is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.

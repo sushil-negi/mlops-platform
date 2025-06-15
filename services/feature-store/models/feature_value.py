@@ -55,7 +55,7 @@ class FeatureValue(Base):
     version = Column(Integer, default=1)
 
     # Metadata
-    metadata = Column(JSON, default=dict)
+    extra_metadata = Column(JSON, default=dict)
 
     # Relationships
     feature = relationship("Feature", back_populates="values")
@@ -119,5 +119,5 @@ class FeatureValue(Base):
                 self.created_timestamp.isoformat() if self.created_timestamp else None
             ),
             "version": self.version,
-            "metadata": self.metadata or {},
+            "metadata": self.extra_metadata or {},
         }
