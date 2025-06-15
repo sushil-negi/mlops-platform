@@ -140,11 +140,11 @@ jobs:
     
     - name: Validate Prometheus configuration
       run: |
-        docker run --rm -v $PWD/infrastructure/prometheus:/etc/prometheus prom/prometheus:latest promtool check config /etc/prometheus/prometheus.yml
+        docker run --rm -v $PWD/infrastructure/docker/prometheus:/etc/prometheus prom/prometheus:latest promtool check config /etc/prometheus/prometheus.yml
     
     - name: Validate Grafana provisioning
       run: |
-        find infrastructure/grafana/provisioning -name "*.yml" -exec echo "Checking {}" \; -exec cat {} \;
+        find infrastructure/docker/grafana/provisioning -name "*.yml" -exec echo "Checking {}" \; -exec cat {} \;
 
   # Integration tests with actual services
   integration-tests:
