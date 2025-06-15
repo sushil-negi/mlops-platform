@@ -274,35 +274,63 @@ jobs:
     
     - name: Wait for application services to be healthy
       run: |
-        # Function to check service health with better error handling
+        # Enhanced function with exponential backoff and better error handling
         check_service() {
           local service_name=$1
           local port=$2
-          local max_attempts=60
+          local max_wait=600  # 10 minutes
+          local wait_time=2
+          local elapsed=0
           local attempt=1
           
           echo "Waiting for $service_name on port $port..."
-          while [ $attempt -le $max_attempts ]; do
+          
+          while [ $elapsed -lt $max_wait ]; do
             if curl -f http://localhost:$port/health 2>/dev/null; then
-              echo "✓ $service_name is healthy!"
+              echo "✓ $service_name is healthy after ${elapsed}s!"
               return 0
             fi
             
-            if [ $attempt -eq 1 ] || [ $((attempt % 10)) -eq 0 ]; then
-              echo "  Attempt $attempt/$max_attempts - $service_name not ready yet..."
-              # Show container status on every 10th attempt
-              docker compose -f docker-compose.platform.yml ps | grep -E "(NAME|$service_name)" || true
+            # Show progress every 30 seconds or on first attempt
+            if [ $attempt -eq 1 ] || [ $((elapsed % 30)) -eq 0 ]; then
+              echo "  Attempt $attempt - $service_name not ready yet (${elapsed}s elapsed)..."
+              
+              # Check container status
+              local container_status
+              container_status=$(docker compose -f docker-compose.platform.yml ps $service_name --format table 2>/dev/null | tail -n +2)
+              if [ -n "$container_status" ]; then
+                echo "  Container status: $container_status"
+              else
+                echo "  ⚠️ Container not found - may be starting or failed"
+              fi
+              
+              # Show recent logs on significant attempts
+              if [ $attempt -eq 1 ] || [ $((elapsed % 60)) -eq 0 ]; then
+                echo "  Recent logs:"
+                docker compose -f docker-compose.platform.yml logs --tail=5 $service_name 2>/dev/null | sed 's/^/    /'
+              fi
             fi
             
-            sleep 5
+            sleep $wait_time
+            elapsed=$((elapsed + wait_time))
+            wait_time=$((wait_time < 10 ? wait_time + 1 : 10))  # Cap at 10s
             ((attempt++))
           done
           
-          echo "✗ $service_name failed to become healthy after $max_attempts attempts"
-          echo "Container environment variables:"
-          docker compose -f docker-compose.platform.yml exec -T $service_name env | grep -E "(MINIO|DATABASE|REDIS|STORAGE)" || echo "Container not running to check env"
-          echo "Container logs for $service_name:"
-          docker compose -f docker-compose.platform.yml logs --tail=30 $service_name
+          echo "✗ $service_name failed to become healthy after ${max_wait}s"
+          echo "Final diagnostics:"
+          
+          # Container status
+          docker compose -f docker-compose.platform.yml ps $service_name || echo "Container status unavailable"
+          
+          # Environment variables
+          echo "Environment variables:"
+          docker compose -f docker-compose.platform.yml exec -T $service_name env | grep -E "(MINIO|DATABASE|REDIS|STORAGE|PORT)" 2>/dev/null || echo "Could not retrieve environment variables"
+          
+          # Full logs
+          echo "Full container logs:"
+          docker compose -f docker-compose.platform.yml logs --tail=50 $service_name
+          
           return 1
         }
         
