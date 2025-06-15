@@ -63,21 +63,21 @@ docker-compose ps
 ### **2. Verify Platform Health**
 ```bash
 # Check all service endpoints
-curl http://localhost:8000/health  # Model Registry
-curl http://localhost:8003/health  # Experiment Tracking  
-curl http://localhost:8002/health  # Feature Store
-curl http://localhost:8004/health  # Pipeline Orchestrator
-curl http://localhost:8090/health  # A/B Testing
+curl http://localhost:8000/health/  # Model Registry (requires trailing slash)
+curl http://localhost:8003/health   # Experiment Tracking  
+curl http://localhost:8002/health   # Feature Store
+curl http://localhost:8004/health   # Pipeline Orchestrator
+curl http://localhost:8090/health   # A/B Testing
 curl http://localhost:9090/-/healthy # Prometheus
 curl http://localhost:3000/api/health # Grafana
 ```
 
-### **3. Access Platform UIs**
-- **Model Registry**: http://localhost:8000/ui
-- **Experiment Tracking**: http://localhost:8003/ui  
-- **Feature Store**: http://localhost:8002/ui
-- **Pipeline Orchestrator**: http://localhost:8004/ui
-- **A/B Testing**: http://localhost:8090/ui
+### **3. Access Platform APIs & Documentation**
+- **Model Registry API**: http://localhost:8000/docs
+- **Experiment Tracking API**: http://localhost:8003/docs  
+- **Feature Store API**: http://localhost:8002/docs
+- **Pipeline Orchestrator API**: http://localhost:8004/docs
+- **A/B Testing API**: http://localhost:8090/docs
 - **Prometheus**: http://localhost:9090
 - **Grafana**: http://localhost:3000 (admin/admin)
 
