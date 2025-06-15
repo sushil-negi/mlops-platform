@@ -94,11 +94,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Install database clients
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y postgresql-client redis-tools
-    
     - name: Create test environment file
       run: |
         cat > .env << EOF
@@ -124,11 +119,24 @@ jobs:
         echo "=== MinIO logs ==="
         docker compose -f docker-compose.platform.yml logs minio --tail 10
     
-    - name: Wait for PostgreSQL to be ready
+    - name: Install database clients
       run: |
-        echo "Waiting for PostgreSQL to be ready..."
+        sudo apt-get update
+        sudo apt-get install -y postgresql-client redis-tools
+    
+    - name: Wait for infrastructure services to be ready
+      run: |
+        echo "Waiting for PostgreSQL..."
         timeout 120 bash -c 'until PGPASSWORD=test123 pg_isready -h localhost -U mlops -d mlops_platform; do echo "Waiting for PostgreSQL..."; sleep 5; done'
         echo "PostgreSQL is ready!"
+        
+        echo "Waiting for Redis..."
+        timeout 120 bash -c 'until redis-cli -h localhost ping > /dev/null 2>&1; do echo "Waiting for Redis..."; sleep 5; done'
+        echo "Redis is ready!"
+        
+        echo "Waiting for MinIO..."
+        timeout 120 bash -c 'until curl -f http://localhost:9000/minio/health/live > /dev/null 2>&1; do echo "Waiting for MinIO..."; sleep 5; done'
+        echo "MinIO is ready!"
     
     - name: Test database migrations
       run: |
