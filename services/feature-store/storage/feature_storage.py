@@ -55,23 +55,33 @@ class FeatureStorage:
         # Initialize compute engine (DuckDB)
         if settings.COMPUTE_ENGINE == "duckdb":
             self.duckdb_conn = duckdb.connect(":memory:")
-            # Install and load httpfs for S3 access
-            self.duckdb_conn.execute("INSTALL httpfs;")
-            self.duckdb_conn.execute("LOAD httpfs;")
+            # Install and load httpfs for S3 access (with fallback for ARM64)
+            try:
+                self.duckdb_conn.execute("INSTALL httpfs;")
+                self.duckdb_conn.execute("LOAD httpfs;")
+                logger.info("DuckDB httpfs extension loaded successfully")
+            except Exception as e:
+                logger.warning(f"Could not load httpfs extension: {e}")
+                logger.info("Using DuckDB without httpfs - S3 features may be limited")
 
-            # Configure S3 credentials for DuckDB
+            # Configure S3 credentials for DuckDB (only if httpfs is available)
             if settings.STORAGE_BACKEND == "s3":
-                self.duckdb_conn.execute(
-                    f"""
-                    SET s3_endpoint='{
-                        settings.S3_ENDPOINT.replace("http://", "")
-                        .replace("https://", "")
-                    }';
-                    SET s3_access_key_id='{settings.S3_ACCESS_KEY}';
-                    SET s3_secret_access_key='{settings.S3_SECRET_KEY}';
-                    SET s3_use_ssl={str(settings.S3_USE_SSL).lower()};
-                """
-                )
+                try:
+                    self.duckdb_conn.execute(
+                        f"""
+                        SET s3_endpoint='{
+                            settings.S3_ENDPOINT.replace("http://", "")
+                            .replace("https://", "")
+                        }';
+                        SET s3_access_key_id='{settings.S3_ACCESS_KEY}';
+                        SET s3_secret_access_key='{settings.S3_SECRET_KEY}';
+                        SET s3_use_ssl={str(settings.S3_USE_SSL).lower()};
+                    """
+                    )
+                    logger.info("DuckDB S3 configuration applied")
+                except Exception as e:
+                    logger.warning(f"Could not configure S3 for DuckDB: {e}")
+                    logger.info("DuckDB will use boto3 for S3 operations")
 
             logger.info("Initialized DuckDB compute engine")
 

@@ -5,7 +5,7 @@ Configuration management for Experiment Tracking service
 import os
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 # Type ignore for environments without pydantic-settings package
 try:
@@ -70,7 +70,10 @@ class Settings(BaseSettings):
     max_concurrent_visualizations: int = 50
 
     # Security settings
-    secret_key: str = "experiment-tracking-secret-key-change-in-production"
+    secret_key: str = Field(
+        default_factory=lambda: os.getenv("SECRET_KEY", "dev-secret-key"),
+        env="SECRET_KEY",
+    )
     access_token_expire_minutes: int = 30
     api_key_header: str = "X-API-Key"
 

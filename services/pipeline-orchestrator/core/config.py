@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "MLOps Pipeline Orchestrator"
     DEBUG: bool = Field(default=False, env="DEBUG")
     HOST: str = Field(default="0.0.0.0", env="HOST")
-    PORT: int = Field(default=8001, env="PORT")  # Different port from Model Registry
+    PORT: int = Field(default=8004, env="PORT")  # Pipeline Orchestrator port
     LOG_LEVEL: str = Field(default="INFO", env="LOG_LEVEL")
 
     # CORS settings
@@ -53,7 +53,8 @@ class Settings(BaseSettings):
 
     # Security settings
     SECRET_KEY: str = Field(
-        default="your-secret-key-change-this-in-production", env="SECRET_KEY"
+        default_factory=lambda: os.getenv("SECRET_KEY", "dev-secret-key"),
+        env="SECRET_KEY",
     )
     ALGORITHM: str = Field(default="HS256", env="ALGORITHM")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(

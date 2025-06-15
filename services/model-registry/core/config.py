@@ -52,7 +52,8 @@ class Settings(BaseSettings):
 
     # Security settings
     SECRET_KEY: str = Field(
-        default="your-secret-key-change-this-in-production", env="SECRET_KEY"
+        default_factory=lambda: os.getenv("SECRET_KEY", "dev-secret-key"),
+        env="SECRET_KEY",
     )
     ALGORITHM: str = Field(default="HS256", env="ALGORITHM")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(

@@ -20,6 +20,10 @@ RUN pip install --no-cache-dir \
 # Create a custom gunicorn config
 RUN echo "bind = '0.0.0.0:5000'" > /gunicorn.conf.py
 
+# Create non-root user
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /gunicorn.conf.py
+USER appuser
+
 # Set environment variables
 ENV GUNICORN_CMD_ARGS="--config /gunicorn.conf.py"
 
