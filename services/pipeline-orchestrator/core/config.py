@@ -7,7 +7,7 @@ from functools import lru_cache
 from typing import Dict, List, Optional
 
 from pydantic import Field, validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -170,10 +170,7 @@ class Settings(BaseSettings):
             raise ValueError("MAX_WORKERS must be at least 1")
         return v
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 class DevelopmentSettings(Settings):

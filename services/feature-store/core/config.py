@@ -5,7 +5,7 @@ Configuration management for Feature Store 2.0
 from typing import List, Optional
 
 from pydantic import Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -87,9 +87,7 @@ class Settings(BaseSettings):
         default=90, env="TIME_SERIES_RETENTION_DAYS"
     )
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 # Create global settings instance

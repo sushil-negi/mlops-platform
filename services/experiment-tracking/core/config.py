@@ -9,10 +9,11 @@ from pydantic import BaseModel
 
 # Type ignore for environments without pydantic-settings package
 try:
-    from pydantic_settings import BaseSettings  # type: ignore
+    from pydantic_settings import BaseSettings, SettingsConfigDict  # type: ignore
 except ImportError:
     # Fallback implementation for CI/environments without pydantic-settings
     BaseSettings = BaseModel
+    SettingsConfigDict = dict
 
 
 class Settings(BaseSettings):
@@ -103,9 +104,7 @@ class Settings(BaseSettings):
     min_crisis_detection_rate: float = 0.99
     min_response_quality_score: float = 0.8
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(case_sensitive=True)
 
 
 # Global settings instance
