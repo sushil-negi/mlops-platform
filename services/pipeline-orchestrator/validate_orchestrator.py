@@ -113,9 +113,11 @@ def analyze_core_components():
     print("\n🔧 Core Components Analysis...")
 
     components = {
-        "DAG Engine": "Directed Acyclic Graph management with cycle detection and validation",
-        "Intelligent Scheduler": "Resource-aware task scheduling with retry policies",
-        "Task Executor": "Multi-operator execution engine with ML-specific operators",
+        "DAG Engine": (
+            "Directed Acyclic Graph management with cycle detection " "and validation"
+        ),
+        "Intelligent Scheduler": ("Resource-aware task scheduling with retry policies"),
+        "Task Executor": ("Multi-operator execution engine with ML-specific operators"),
         "Resource Manager": "Dynamic resource allocation and monitoring",
         "Configuration System": "Environment-aware settings with validation",
         "Database Layer": "Async database with connection pooling",
@@ -131,8 +133,8 @@ def analyze_ml_operators():
 
     operators = {
         "Data Ingestion": "Multi-source data ingestion with format support",
-        "Data Validation": "Quality checks with configurable error thresholds",
-        "Model Training": "Framework-agnostic ML training with metrics tracking",
+        "Data Validation": ("Quality checks with configurable error thresholds"),
+        "Model Training": ("Framework-agnostic ML training with metrics tracking"),
         "Model Registration": "Automatic model registry integration",
         "Custom Scripts": "Flexible script execution with environment passing",
     }
@@ -290,19 +292,19 @@ def main():
         print("\n" + "=" * 65)
         print("🎉 Pipeline Orchestrator 2.0 Architecture is Complete!")
 
-        print(f"\n📋 Summary:")
-        print(f"   • Universal pipeline orchestration engine")
-        print(f"   • Intelligent resource-aware scheduling")
-        print(f"   • ML-specific operators and workflows")
-        print(f"   • Enterprise-ready with monitoring and scaling")
-        print(f"   • Complete API for pipeline lifecycle management")
+        print("\n📋 Summary:")
+        print("   • Universal pipeline orchestration engine")
+        print("   • Intelligent resource-aware scheduling")
+        print("   • ML-specific operators and workflows")
+        print("   • Enterprise-ready with monitoring and scaling")
+        print("   • Complete API for pipeline lifecycle management")
 
-        print(f"\n🔧 To start development:")
-        print(f"   1. Set up dependencies: pip install -r requirements.txt")
-        print(f"   2. Configure database and Redis")
-        print(f"   3. Start service: python3 main.py")
-        print(f"   4. Access API docs: http://localhost:8001/docs")
-        print(f"   5. Create your first ML pipeline!")
+        print("\n🔧 To start development:")
+        print("   1. Set up dependencies: pip install -r requirements.txt")
+        print("   2. Configure database and Redis")
+        print("   3. Start service: python3 main.py")
+        print("   4. Access API docs: http://localhost:8001/docs")
+        print("   5. Create your first ML pipeline!")
 
     else:
         print("\n❌ Architecture validation failed - missing components")

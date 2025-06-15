@@ -129,7 +129,6 @@ class DataValidationOperator(BaseOperator):
 
         try:
             # Get input data from previous task
-            input_data_path = parameters.get("input_path")
             validation_rules = parameters.get("validation_rules", {})
 
             # Simulate validation process
@@ -139,7 +138,8 @@ class DataValidationOperator(BaseOperator):
             total_records = context.get("data_ingestion", {}).get(
                 "rows_processed", 1000
             )
-            validation_errors = max(0, int(total_records * 0.02))  # 2% error rate
+            # 2% error rate
+            validation_errors = max(0, int(total_records * 0.02))
 
             output_data = {
                 "total_records": total_records,
@@ -155,12 +155,15 @@ class DataValidationOperator(BaseOperator):
             # Fail if error rate is too high
             max_error_rate = parameters.get("max_error_rate", 0.05)
             if output_data["error_rate"] > max_error_rate:
-                raise ValueError(
-                    f"Validation error rate {output_data['error_rate']:.2%} exceeds threshold {max_error_rate:.2%}"
+                error_msg = (
+                    f"Validation error rate {output_data['error_rate']:.2%} "
+                    f"exceeds threshold {max_error_rate:.2%}"
                 )
+                raise ValueError(error_msg)
 
             self.logger.info(
-                f"Data validation completed: {output_data['valid_records']} valid records"
+                f"Data validation completed: "
+                f"{output_data['valid_records']} valid records"
             )
 
             return TaskResult(task_id=task.id, success=True, output_data=output_data)
@@ -187,7 +190,6 @@ class ModelTrainingOperator(BaseOperator):
             model_type = parameters.get("model_type", "classification")
             algorithm = parameters.get("algorithm", "random_forest")
             hyperparameters = parameters.get("hyperparameters", {})
-            training_data_path = parameters.get("training_data_path")
 
             # Simulate training process (longer for ML tasks)
             training_duration = parameters.get("training_duration_seconds", 10)
@@ -218,13 +220,14 @@ class ModelTrainingOperator(BaseOperator):
             # Check if model meets quality threshold
             min_accuracy = parameters.get("min_accuracy", 0.8)
             if output_data["model_metrics"]["accuracy"] < min_accuracy:
-                raise ValueError(
-                    f"Model accuracy {output_data['model_metrics']['accuracy']:.3f} below threshold {min_accuracy}"
+                accuracy = output_data["model_metrics"]["accuracy"]
+                error_msg = (
+                    f"Model accuracy {accuracy:.3f} " f"below threshold {min_accuracy}"
                 )
+                raise ValueError(error_msg)
 
-            self.logger.info(
-                f"Model training completed with accuracy: {output_data['model_metrics']['accuracy']:.3f}"
-            )
+            accuracy = output_data["model_metrics"]["accuracy"]
+            self.logger.info(f"Model training completed with accuracy: {accuracy:.3f}")
 
             return TaskResult(
                 task_id=task.id,
@@ -359,9 +362,11 @@ class CustomScriptOperator(BaseOperator):
                 )
 
                 if process.returncode != 0:
-                    raise RuntimeError(
-                        f"Script failed with exit code {process.returncode}: {stderr.decode()}"
+                    error_msg = (
+                        f"Script failed with exit code {process.returncode}: "
+                        f"{stderr.decode()}"
                     )
+                    raise RuntimeError(error_msg)
 
                 output_data = {
                     "script_type": script_type,
@@ -371,7 +376,7 @@ class CustomScriptOperator(BaseOperator):
                     "executed_at": datetime.utcnow().isoformat(),
                 }
 
-                self.logger.info(f"Custom script executed successfully")
+                self.logger.info("Custom script executed successfully")
 
                 return TaskResult(
                     task_id=task.id, success=True, output_data=output_data
@@ -446,8 +451,9 @@ class TaskExecutor:
         context = {}
         for upstream_task_id in task.upstream_tasks:
             if upstream_task_id in task_outputs:
-                # Use task name as context key if available, otherwise use task ID
-                context_key = upstream_task_id  # Could be improved to use task names
+                # Use task name as context key if available, otherwise use ID
+                # Could be improved to use task names
+                context_key = upstream_task_id
                 context[context_key] = task_outputs[upstream_task_id]
 
         # Merge pipeline parameters
@@ -461,7 +467,8 @@ class TaskExecutor:
 
             if result.success:
                 logger.info(
-                    f"Task {task.name} completed successfully in {execution_time:.2f}s"
+                    f"Task {task.name} completed successfully in "
+                    f"{execution_time:.2f}s"
                 )
                 return result.output_data
             else:

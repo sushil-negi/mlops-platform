@@ -59,14 +59,19 @@ class PipelineRunListResponse(BaseModel):
     size: int
 
 
-# Mock data for demonstration (would be replaced with actual scheduler integration)
+# Mock data for demonstration (would be replaced with actual
+# scheduler integration)
 mock_runs = {}
 
 
 @router.post(
-    "/", response_model=PipelineRunResponse, status_code=status.HTTP_201_CREATED
+    "/",
+    response_model=PipelineRunResponse,
+    status_code=status.HTTP_201_CREATED,
 )
-async def start_pipeline_run(run_request: PipelineRunRequest) -> PipelineRunResponse:
+async def start_pipeline_run(
+    run_request: PipelineRunRequest,
+) -> PipelineRunResponse:
     """Start a new pipeline run"""
 
     # Check if pipeline exists
@@ -135,7 +140,9 @@ async def start_pipeline_run(run_request: PipelineRunRequest) -> PipelineRunResp
     logger.info(f"Started pipeline run {run_id} for pipeline {pipeline.name}")
 
     # TODO: Actually submit to scheduler
-    # run_id = await scheduler.submit_pipeline(pipeline, run_request.triggered_by, run_request.parameters)
+    # run_id = await scheduler.submit_pipeline(
+    #     pipeline, run_request.triggered_by, run_request.parameters
+    # )
 
     return run_response
 
@@ -225,7 +232,9 @@ async def cancel_pipeline_run(run_id: str) -> Dict:
 
 @router.get("/{run_id}/logs")
 async def get_pipeline_run_logs(
-    run_id: str, task_id: Optional[str] = None, tail: int = Query(100, ge=1, le=1000)
+    run_id: str,
+    task_id: Optional[str] = None,
+    tail: int = Query(100, ge=1, le=1000),
 ) -> Dict:
     """Get logs for a pipeline run or specific task"""
 
@@ -238,10 +247,10 @@ async def get_pipeline_run_logs(
     # Mock log data
     logs = [
         f"2024-01-01 10:00:00 - INFO - Pipeline run {run_id} started",
-        f"2024-01-01 10:00:01 - INFO - Executing task data_ingestion",
-        f"2024-01-01 10:00:05 - INFO - Task data_ingestion completed successfully",
-        f"2024-01-01 10:00:06 - INFO - Executing task data_validation",
-        f"2024-01-01 10:00:10 - INFO - Task data_validation completed successfully",
+        "2024-01-01 10:00:01 - INFO - Executing task data_ingestion",
+        ("2024-01-01 10:00:05 - INFO - Task data_ingestion completed " "successfully"),
+        "2024-01-01 10:00:06 - INFO - Executing task data_validation",
+        ("2024-01-01 10:00:10 - INFO - Task data_validation completed " "successfully"),
     ]
 
     if task_id:

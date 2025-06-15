@@ -17,7 +17,9 @@ settings = get_settings()
 
 
 @router.get("/")
-async def get_metrics(db: databases.Database = Depends(get_database)) -> Dict[str, Any]:
+async def get_metrics(
+    db: databases.Database = Depends(get_database),
+) -> Dict[str, Any]:
     """Get service metrics"""
 
     try:
@@ -43,16 +45,16 @@ async def get_metrics(db: databases.Database = Depends(get_database)) -> Dict[st
         # Recent activity (last 24 hours)
         recent_models = await db.fetch_one(
             """
-            SELECT COUNT(*) as count 
-            FROM models 
+            SELECT COUNT(*) as count
+            FROM models
             WHERE created_at > NOW() - INTERVAL '24 hours'
         """
         )
 
         recent_versions = await db.fetch_one(
             """
-            SELECT COUNT(*) as count 
-            FROM model_versions 
+            SELECT COUNT(*) as count
+            FROM model_versions
             WHERE created_at > NOW() - INTERVAL '24 hours'
         """
         )
@@ -84,7 +86,9 @@ async def get_metrics(db: databases.Database = Depends(get_database)) -> Dict[st
 
 
 @router.get("/prometheus")
-async def get_prometheus_metrics(db: databases.Database = Depends(get_database)) -> str:
+async def get_prometheus_metrics(
+    db: databases.Database = Depends(get_database),
+) -> str:
     """Get metrics in Prometheus format"""
 
     try:
@@ -115,7 +119,7 @@ model_registry_up 1
 
     except Exception as e:
         logger.error(f"Failed to generate Prometheus metrics: {e}")
-        return f"""# HELP model_registry_up Service availability
+        return """# HELP model_registry_up Service availability
 # TYPE model_registry_up gauge
 model_registry_up 0
 """

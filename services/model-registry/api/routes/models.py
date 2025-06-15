@@ -103,11 +103,15 @@ async def create_model(
     await db.execute(
         """
         INSERT INTO models (
-            id, name, display_name, description, framework, model_type, task_type,
-            tags, metadata, created_by, team, project, current_stage, created_at, updated_at
+            id, name, display_name, description, framework, model_type,
+            task_type,
+            tags, metadata, created_by, team, project, current_stage,
+            created_at, updated_at
         ) VALUES (
-            :id, :name, :display_name, :description, :framework, :model_type, :task_type,
-            :tags, :metadata, :created_by, :team, :project, :current_stage, :created_at, :updated_at
+            :id, :name, :display_name, :description, :framework,
+            :model_type, :task_type,
+            :tags, :metadata, :created_by, :team, :project,
+            :current_stage, :created_at, :updated_at
         )
         """,
         {
@@ -206,7 +210,7 @@ async def list_models(
     params.update({"limit": size, "offset": offset})
 
     models_query = f"""
-        SELECT * FROM models 
+        SELECT * FROM models
         WHERE {where_clause}
         ORDER BY created_at DESC
         LIMIT :limit OFFSET :offset
@@ -347,7 +351,7 @@ async def update_model(
 
     # Execute update
     update_query = f"""
-        UPDATE models 
+        UPDATE models
         SET {', '.join(updates)}, updated_at = :updated_at
         WHERE id = :id
     """

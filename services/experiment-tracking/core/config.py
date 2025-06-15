@@ -5,7 +5,7 @@ Configuration management for Experiment Tracking service
 import os
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 # Type ignore for environments without pydantic-settings package
 try:

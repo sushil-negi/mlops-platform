@@ -86,7 +86,10 @@ async def create_feature(
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=f"Feature '{feature_data.name}' already exists in this feature set",
+                detail=(
+                    f"Feature '{feature_data.name}' already exists in this "
+                    "feature set"
+                ),
             )
 
         # Create feature
@@ -239,7 +242,8 @@ async def activate_feature(feature_id: str, db: Session = Depends(get_db)) -> Di
 
     if feature.status == FeatureStatus.ACTIVE:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Feature is already active"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Feature is already active",
         )
 
     feature.status = FeatureStatus.ACTIVE

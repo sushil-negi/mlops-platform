@@ -4,7 +4,6 @@ Validation script for Experiment Tracking service architecture
 """
 
 import importlib.util
-import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
@@ -203,7 +202,9 @@ def validate_healthcare_integration() -> List[str]:
     return errors
 
 
-def generate_report(validation_results: Dict[str, List[str]]) -> Dict[str, Any]:
+def generate_report(
+    validation_results: Dict[str, List[str]],
+) -> Dict[str, Any]:
     """Generate validation report"""
 
     total_errors = sum(len(errors) for errors in validation_results.values())
@@ -312,7 +313,7 @@ def main():
     with open("experiment_tracking_validation_report.json", "w") as f:
         json.dump(report, f, indent=2)
 
-    print(f"\n📄 Report saved to: experiment_tracking_validation_report.json")
+    print("\n📄 Report saved to: experiment_tracking_validation_report.json")
 
     # Exit with appropriate code
     sys.exit(0 if report["overall_status"] == "PASSED" else 1)

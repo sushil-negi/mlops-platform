@@ -2,7 +2,6 @@
 Visualization API endpoints for Experiment Tracking service
 """
 
-import json
 import logging
 import uuid
 from datetime import datetime, timedelta

@@ -46,7 +46,7 @@ class FeatureStorage:
             # Create bucket if it doesn't exist
             try:
                 self.s3_client.head_bucket(Bucket=settings.S3_BUCKET)
-            except:
+            except Exception:
                 self.s3_client.create_bucket(Bucket=settings.S3_BUCKET)
 
             logger.info(f"Initialized S3 storage with bucket: {settings.S3_BUCKET}")
@@ -62,7 +62,10 @@ class FeatureStorage:
             if settings.STORAGE_BACKEND == "s3":
                 self.duckdb_conn.execute(
                     f"""
-                    SET s3_endpoint='{settings.S3_ENDPOINT.replace("http://", "").replace("https://", "")}';
+                    SET s3_endpoint='{
+                        settings.S3_ENDPOINT.replace("http://", "")
+                        .replace("https://", "")
+                    }';
                     SET s3_access_key_id='{settings.S3_ACCESS_KEY}';
                     SET s3_secret_access_key='{settings.S3_SECRET_KEY}';
                     SET s3_use_ssl={str(settings.S3_USE_SSL).lower()};
@@ -112,7 +115,9 @@ class FeatureStorage:
                 # Upload to S3
                 s3_key = path
                 self.s3_client.put_object(
-                    Bucket=settings.S3_BUCKET, Key=s3_key, Body=buffer.getvalue()
+                    Bucket=settings.S3_BUCKET,
+                    Key=s3_key,
+                    Body=buffer.getvalue(),
                 )
 
                 full_path = f"s3://{settings.S3_BUCKET}/{s3_key}"
@@ -170,9 +175,15 @@ class FeatureStorage:
             if settings.COMPUTE_ENGINE == "duckdb":
                 # Create view from parquet files
                 if settings.STORAGE_BACKEND == "s3":
-                    file_pattern = f"s3://{settings.S3_BUCKET}/feature_sets/{feature_set.name}/data/*.parquet"
+                    file_pattern = (
+                        f"s3://{settings.S3_BUCKET}/feature_sets/"
+                        f"{feature_set.name}/data/*.parquet"
+                    )
                 else:
-                    file_pattern = f"{settings.STORAGE_PATH}/feature_sets/{feature_set.name}/data/*.parquet"
+                    file_pattern = (
+                        f"{settings.STORAGE_PATH}/feature_sets/"
+                        f"{feature_set.name}/data/*.parquet"
+                    )
 
                 query = f"SELECT * FROM read_parquet('{file_pattern}')"
 
@@ -388,7 +399,9 @@ class FeatureStorage:
             # Local file system
             import os
 
-            data_dir = f"{settings.STORAGE_PATH}/feature_sets/{feature_set.name}/data/"
+            data_dir = (
+                f"{settings.STORAGE_PATH}/feature_sets/" f"{feature_set.name}/data/"
+            )
             if os.path.exists(data_dir):
                 for file in os.listdir(data_dir):
                     if file.endswith(".parquet"):

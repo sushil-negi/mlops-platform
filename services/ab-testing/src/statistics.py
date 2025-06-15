@@ -243,21 +243,39 @@ class ABTestAnalyzer:
         # Healthcare-specific recommendations
         if metric_name == "crisis_detection_rate":
             if diff > 0:
-                return "Model B shows improved crisis detection. Recommend gradual rollout with monitoring."
+                return (
+                    "Model B shows improved crisis detection. "
+                    "Recommend gradual rollout with monitoring."
+                )
             else:
-                return "Model B shows decreased crisis detection. DO NOT DEPLOY - safety risk."
+                return (
+                    "Model B shows decreased crisis detection. "
+                    "DO NOT DEPLOY - safety risk."
+                )
 
         elif metric_name == "accuracy":
             if diff > 0:
-                return f"Model B shows {abs(diff)*100:.1f}% accuracy improvement. Recommend deployment."
+                return (
+                    f"Model B shows {abs(diff)*100:.1f}% accuracy improvement. "
+                    "Recommend deployment."
+                )
             else:
-                return f"Model B shows {abs(diff)*100:.1f}% accuracy decrease. Consider further training."
+                return (
+                    f"Model B shows {abs(diff)*100:.1f}% accuracy decrease. "
+                    "Consider further training."
+                )
 
         elif metric_name == "empathy_score":
             if diff > 0:
-                return f"Model B shows improved empathy. Recommend deployment for better user experience."
+                return (
+                    "Model B shows improved empathy. "
+                    "Recommend deployment for better user experience."
+                )
             else:
-                return f"Model B shows decreased empathy. Consider empathy-focused training."
+                return (
+                    "Model B shows decreased empathy. "
+                    "Consider empathy-focused training."
+                )
 
         elif metric_name == "response_time":
             if diff < 0:  # Lower is better for response time
@@ -324,7 +342,10 @@ class ABTestAnalyzer:
             confidence = "high" if improvements >= 2 else "medium"
             return {
                 "decision": "accept",
-                "reason": f"Model B shows {improvements} significant improvements vs {regressions} regressions",
+                "reason": (
+                    f"Model B shows {improvements} significant improvements "
+                    f"vs {regressions} regressions"
+                ),
                 "confidence": confidence,
                 "action": "Deploy Model B with gradual rollout and monitoring.",
             }
@@ -332,9 +353,15 @@ class ABTestAnalyzer:
         elif regressions > improvements:
             return {
                 "decision": "reject",
-                "reason": f"Model B shows {regressions} significant regressions vs {improvements} improvements",
+                "reason": (
+                    f"Model B shows {regressions} significant regressions "
+                    f"vs {improvements} improvements"
+                ),
                 "confidence": "medium",
-                "action": "Continue with Model A. Consider additional training for Model B.",
+                "action": (
+                    "Continue with Model A. "
+                    "Consider additional training for Model B."
+                ),
             }
 
         else:
@@ -400,7 +427,7 @@ class ABTestAnalyzer:
 
             return min(max(power, 0), 1)  # Constrain to [0, 1]
 
-        except:
+        except Exception:
             return 0.5  # Default if calculation fails
 
     def _calculate_required_sample_size(
@@ -419,5 +446,5 @@ class ABTestAnalyzer:
 
             return max(int(np.ceil(n)), 30)  # Minimum 30 samples
 
-        except:
+        except Exception:
             return 1000  # Default if calculation fails

@@ -46,24 +46,28 @@ def check_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "core", "config.py"), "Configuration management"
+            os.path.join(base_dir, "core", "config.py"),
+            "Configuration management",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "core", "database.py"), "Database configuration"
+            os.path.join(base_dir, "core", "database.py"),
+            "Database configuration",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "core", "logging.py"), "Logging configuration"
+            os.path.join(base_dir, "core", "logging.py"),
+            "Logging configuration",
         )
     )
 
     # Models package
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "models", "__init__.py"), "Models package init"
+            os.path.join(base_dir, "models", "__init__.py"),
+            "Models package init",
         )
     )
     checks.append(
@@ -71,17 +75,20 @@ def check_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "models", "version.py"), "ModelVersion entity"
+            os.path.join(base_dir, "models", "version.py"),
+            "ModelVersion entity",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "models", "experiment.py"), "Experiment entity"
+            os.path.join(base_dir, "models", "experiment.py"),
+            "Experiment entity",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "models", "artifact.py"), "Artifact entity"
+            os.path.join(base_dir, "models", "artifact.py"),
+            "Artifact entity",
         )
     )
 
@@ -99,17 +106,20 @@ def check_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "api", "routes", "health.py"), "Health endpoints"
+            os.path.join(base_dir, "api", "routes", "health.py"),
+            "Health endpoints",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "api", "routes", "metrics.py"), "Metrics endpoints"
+            os.path.join(base_dir, "api", "routes", "metrics.py"),
+            "Metrics endpoints",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "api", "routes", "models.py"), "Models API endpoints"
+            os.path.join(base_dir, "api", "routes", "models.py"),
+            "Models API endpoints",
         )
     )
 
@@ -142,7 +152,7 @@ def analyze_model_entities():
         "Automated promotion workflows",
     ]
 
-    print(f"\n🎯 Key Features:")
+    print("\n🎯 Key Features:")
     for feature in features:
         print(f"   ✅ {feature}")
 
@@ -251,11 +261,11 @@ def main():
         print("   • Complete MLOps lifecycle support")
         print("   • Scalable and extensible architecture")
 
-        print(f"\n🔧 To start development:")
-        print(f"   1. Set up database: PostgreSQL")
-        print(f"   2. Install dependencies: pip install -r requirements.txt")
-        print(f"   3. Start service: python3 main.py")
-        print(f"   4. Access docs: http://localhost:8000/docs")
+        print("\n🔧 To start development:")
+        print("   1. Set up database: PostgreSQL")
+        print("   2. Install dependencies: pip install -r requirements.txt")
+        print("   3. Start service: python3 main.py")
+        print("   4. Access docs: http://localhost:8000/docs")
 
     else:
         print("\n❌ Architecture validation failed - missing files")

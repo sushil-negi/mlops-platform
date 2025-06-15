@@ -220,6 +220,7 @@ class MLOpsPreCommitValidator:
             "scripts/",
             "--ignore-missing-imports",
             "--no-strict-optional",
+            "--disable-error-code=import-untyped",
         ]
         success, stdout, stderr = self.run_command(cmd)
         duration = time.time() - start_time

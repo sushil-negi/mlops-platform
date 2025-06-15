@@ -24,11 +24,16 @@ def setup_logging() -> None:
                 "datefmt": "%Y-%m-%d %H:%M:%S",
             },
             "detailed": {
-                "format": "%(asctime)s [%(levelname)s] %(name)s:%(lineno)d: %(message)s",
+                "format": (
+                    "%(asctime)s [%(levelname)s] %(name)s:%(lineno)d: " "%(message)s"
+                ),
                 "datefmt": "%Y-%m-%d %H:%M:%S",
             },
             "json": {
-                "format": '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "logger": "%(name)s", "message": "%(message)s"}',
+                "format": (
+                    '{"timestamp": "%(asctime)s", "level": "%(levelname)s", '
+                    '"logger": "%(name)s", "message": "%(message)s"}'
+                ),
                 "datefmt": "%Y-%m-%dT%H:%M:%SZ",
             },
         },
@@ -55,11 +60,17 @@ def setup_logging() -> None:
                 "propagate": False,
             },
             "experiment-tracking": {
-                "handlers": ["console", "file"] if not settings.debug else ["console"],
+                "handlers": (
+                    ["console", "file"] if not settings.debug else ["console"]
+                ),
                 "level": settings.log_level,
                 "propagate": False,
             },
-            "uvicorn": {"handlers": ["console"], "level": "INFO", "propagate": False},
+            "uvicorn": {
+                "handlers": ["console"],
+                "level": "INFO",
+                "propagate": False,
+            },
             "sqlalchemy": {
                 "handlers": ["console"],
                 "level": "WARNING",

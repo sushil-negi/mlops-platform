@@ -288,7 +288,7 @@ async def get_routing_decision(
         )
 
     # Consistent routing based on user_id
-    hash_value = int(hashlib.md5(user_id.encode()).hexdigest(), 16)
+    hash_value = int(hashlib.sha256(user_id.encode()).hexdigest(), 16)
     percentage = hash_value % 100
 
     if percentage < experiment.traffic_split:

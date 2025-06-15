@@ -204,14 +204,40 @@ class SafetyMonitor:
 
                 # Define queries for each metric
                 queries = {
-                    "model_a_accuracy": f'avg(healthcare_ai_model_accuracy{{experiment_id="{experiment_id}",variant="control"}})',
-                    "model_b_accuracy": f'avg(healthcare_ai_model_accuracy{{experiment_id="{experiment_id}",variant="treatment"}})',
-                    "model_a_crisis_rate": f'avg(healthcare_ai_crisis_detection_rate{{experiment_id="{experiment_id}",variant="control"}})',
-                    "model_b_crisis_rate": f'avg(healthcare_ai_crisis_detection_rate{{experiment_id="{experiment_id}",variant="treatment"}})',
-                    "model_a_empathy": f'avg(healthcare_ai_empathy_score{{experiment_id="{experiment_id}",variant="control"}})',
-                    "model_b_empathy": f'avg(healthcare_ai_empathy_score{{experiment_id="{experiment_id}",variant="treatment"}})',
-                    "model_a_response_time_p95": f'histogram_quantile(0.95, rate(healthcare_ai_response_time_seconds_bucket{{experiment_id="{experiment_id}",variant="control"}}[5m]))',
-                    "model_b_response_time_p95": f'histogram_quantile(0.95, rate(healthcare_ai_response_time_seconds_bucket{{experiment_id="{experiment_id}",variant="treatment"}}[5m]))',
+                    "model_a_accuracy": (
+                        f"avg(healthcare_ai_model_accuracy{{"
+                        f'experiment_id="{experiment_id}",variant="control"}})'
+                    ),
+                    "model_b_accuracy": (
+                        f"avg(healthcare_ai_model_accuracy{{"
+                        f'experiment_id="{experiment_id}",variant="treatment"}})'
+                    ),
+                    "model_a_crisis_rate": (
+                        f"avg(healthcare_ai_crisis_detection_rate{{"
+                        f'experiment_id="{experiment_id}",variant="control"}})'
+                    ),
+                    "model_b_crisis_rate": (
+                        f"avg(healthcare_ai_crisis_detection_rate{{"
+                        f'experiment_id="{experiment_id}",variant="treatment"}})'
+                    ),
+                    "model_a_empathy": (
+                        f"avg(healthcare_ai_empathy_score{{"
+                        f'experiment_id="{experiment_id}",variant="control"}})'
+                    ),
+                    "model_b_empathy": (
+                        f"avg(healthcare_ai_empathy_score{{"
+                        f'experiment_id="{experiment_id}",variant="treatment"}})'
+                    ),
+                    "model_a_response_time_p95": (
+                        f"histogram_quantile(0.95, rate("
+                        f"healthcare_ai_response_time_seconds_bucket{{"
+                        f'experiment_id="{experiment_id}",variant="control"}}[5m]))'
+                    ),
+                    "model_b_response_time_p95": (
+                        f"histogram_quantile(0.95, rate("
+                        f"healthcare_ai_response_time_seconds_bucket{{"
+                        f'experiment_id="{experiment_id}",variant="treatment"}}[5m]))'
+                    ),
                 }
 
                 for metric_name, query in queries.items():
@@ -273,12 +299,19 @@ class SafetyMonitor:
                             "action": "stop_experiment",
                         },
                         "annotations": {
-                            "summary": f"Safety violation in experiment {experiment_id}",
-                            "description": f"Critical safety thresholds violated: {', '.join([v.metric for v in violations])}",
+                            "summary": (
+                                f"Safety violation in experiment {experiment_id}"
+                            ),
+                            "description": (
+                                f"Critical safety thresholds violated: "
+                                f"{', '.join([v.metric for v in violations])}"
+                            ),
                             "violations": json.dumps([v.dict() for v in violations]),
                         },
                         "startsAt": datetime.utcnow().isoformat(),
-                        "generatorURL": f"http://ab-testing:8000/experiments/{experiment_id}/safety",
+                        "generatorURL": (
+                            f"http://ab-testing:8000/experiments/{experiment_id}/safety"
+                        ),
                     }
                 ],
             }

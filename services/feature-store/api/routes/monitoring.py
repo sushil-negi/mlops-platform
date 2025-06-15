@@ -83,7 +83,11 @@ async def get_detailed_health(db: Session = Depends(get_db)) -> Dict:
                 "status": "healthy",
                 "connection_pool": {"size": 20, "active": 5, "idle": 15},
             },
-            "storage": {"status": "healthy", "backend": "s3", "accessible": True},
+            "storage": {
+                "status": "healthy",
+                "backend": "s3",
+                "accessible": True,
+            },
             "cache": {
                 "status": "healthy",
                 "type": "redis",
@@ -107,7 +111,8 @@ async def get_feature_statistics(
 ) -> Dict:
     """Get feature usage and performance statistics"""
 
-    cutoff_date = datetime.utcnow() - timedelta(days=days)
+    # cutoff_date = datetime.utcnow() - timedelta(days=days)
+    # Not used currently
 
     # Feature set statistics
     feature_sets = db.query(FeatureSet).all()
@@ -130,10 +135,22 @@ async def get_feature_statistics(
 
     # Top features by usage (mock data for now)
     top_features = [
-        {"name": "user_age", "usage_count": 15420, "avg_latency_ms": 2.3},
-        {"name": "purchase_count", "usage_count": 12350, "avg_latency_ms": 3.1},
+        {
+            "name": "user_age",
+            "usage_count": 15420,
+            "avg_latency_ms": 2.3,
+        },
+        {
+            "name": "purchase_count",
+            "usage_count": 12350,
+            "avg_latency_ms": 3.1,
+        },
         {"name": "last_login", "usage_count": 10200, "avg_latency_ms": 1.8},
-        {"name": "account_balance", "usage_count": 8900, "avg_latency_ms": 2.5},
+        {
+            "name": "account_balance",
+            "usage_count": 8900,
+            "avg_latency_ms": 2.5,
+        },
         {"name": "risk_score", "usage_count": 7650, "avg_latency_ms": 4.2},
     ]
 
@@ -192,8 +209,9 @@ async def get_usage_metrics(
         "summary": {
             "total_requests": sum(d["serving_requests"] for d in daily_usage),
             "total_features_served": sum(d["features_served"] for d in daily_usage),
-            "avg_daily_requests": sum(d["serving_requests"] for d in daily_usage)
-            / len(daily_usage),
+            "avg_daily_requests": (
+                sum(d["serving_requests"] for d in daily_usage) / len(daily_usage)
+            ),
             "peak_day": max(daily_usage, key=lambda x: x["serving_requests"])["date"],
         },
     }
@@ -252,7 +270,9 @@ async def get_active_alerts() -> Dict:
             "id": "alert-001",
             "severity": "warning",
             "title": "High serving latency detected",
-            "description": "P95 latency exceeded threshold (15ms) for the last 10 minutes",
+            "description": (
+                "P95 latency exceeded threshold (15ms) for the last 10 minutes"
+            ),
             "component": "serving_engine",
             "created_at": (datetime.utcnow() - timedelta(minutes=5)).isoformat(),
             "status": "active",
@@ -261,7 +281,10 @@ async def get_active_alerts() -> Dict:
             "id": "alert-002",
             "severity": "info",
             "title": "Materialization job delayed",
-            "description": "Feature set 'user_activity' materialization is 2 hours behind schedule",
+            "description": (
+                "Feature set 'user_activity' materialization is 2 hours "
+                "behind schedule"
+            ),
             "component": "materialization",
             "created_at": (datetime.utcnow() - timedelta(hours=2)).isoformat(),
             "status": "active",

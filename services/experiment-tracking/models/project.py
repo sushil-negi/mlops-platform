@@ -59,7 +59,10 @@ class Project(Base):
     # Timestamps
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(
-        DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
     )
     completed_at = Column(DateTime, nullable=True)
 
@@ -263,7 +266,8 @@ class HealthcareProject(ProjectBase):
 
     domain: str = Field(default="healthcare", description="Domain type")
     compliance_requirements: List[str] = Field(
-        default=["HIPAA", "Medical_Disclaimers"], description="Compliance requirements"
+        default=["HIPAA", "Medical_Disclaimers"],
+        description="Compliance requirements",
     )
     healthcare_config: HealthcareProjectConfig = Field(
         default_factory=HealthcareProjectConfig,
@@ -276,9 +280,12 @@ class HealthcareProject(ProjectBase):
 PROJECT_TEMPLATES = {
     "healthcare_classification": {
         "name": "Healthcare Classification Project",
-        "description": "Template for healthcare AI classification projects",
+        "description": ("Template for healthcare AI classification projects"),
         "tags": ["healthcare", "classification", "ai"],
-        "objectives": "Develop accurate healthcare classification models with safety compliance",
+        "objectives": (
+            "Develop accurate healthcare classification models with safety "
+            "compliance"
+        ),
         "success_criteria": {
             "min_accuracy": 0.95,
             "min_crisis_detection_rate": 0.99,
@@ -302,6 +309,9 @@ PROJECT_TEMPLATES = {
         "description": "Template for research and experimentation",
         "tags": ["research", "experimental"],
         "objectives": "Explore new approaches and methodologies",
-        "success_criteria": {"publication_ready": True, "reproducible_results": True},
+        "success_criteria": {
+            "publication_ready": True,
+            "reproducible_results": True,
+        },
     },
 }

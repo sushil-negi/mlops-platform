@@ -16,7 +16,8 @@ router = APIRouter()
 async def get_system_metrics() -> Dict:
     """Get system metrics for the pipeline orchestrator"""
 
-    # Mock metrics - would be replaced with actual data from scheduler and resource manager
+    # Mock metrics - would be replaced with actual data from scheduler
+    # and resource manager
     return {
         "service": "pipeline-orchestrator",
         "timestamp": time.time(),
@@ -120,8 +121,16 @@ async def get_available_operators() -> Dict:
             "resource_requirements": {"cpu": 0.5, "memory_gb": 1.0, "gpu": 0},
             "parameters": [
                 {"name": "input_path", "type": "string", "required": True},
-                {"name": "validation_rules", "type": "object", "required": False},
-                {"name": "max_error_rate", "type": "number", "required": False},
+                {
+                    "name": "validation_rules",
+                    "type": "object",
+                    "required": False,
+                },
+                {
+                    "name": "max_error_rate",
+                    "type": "number",
+                    "required": False,
+                },
             ],
         },
         {
@@ -132,8 +141,16 @@ async def get_available_operators() -> Dict:
             "parameters": [
                 {"name": "model_type", "type": "string", "required": True},
                 {"name": "algorithm", "type": "string", "required": True},
-                {"name": "hyperparameters", "type": "object", "required": False},
-                {"name": "training_data_path", "type": "string", "required": True},
+                {
+                    "name": "hyperparameters",
+                    "type": "object",
+                    "required": False,
+                },
+                {
+                    "name": "training_data_path",
+                    "type": "string",
+                    "required": True,
+                },
             ],
         },
         {
@@ -155,7 +172,11 @@ async def get_available_operators() -> Dict:
             "resource_requirements": {"cpu": 1.0, "memory_gb": 2.0, "gpu": 0},
             "parameters": [
                 {"name": "script_type", "type": "string", "required": True},
-                {"name": "script_content", "type": "string", "required": False},
+                {
+                    "name": "script_content",
+                    "type": "string",
+                    "required": False,
+                },
                 {"name": "script_path", "type": "string", "required": False},
             ],
         },
@@ -186,11 +207,31 @@ async def get_pipeline_statistics(days: int = Query(7, ge=1, le=30)) -> Dict:
             "total_compute_hours": 18.7,
         },
         "operator_usage": [
-            {"operator": "data_ingestion", "executions": 45, "success_rate": 0.978},
-            {"operator": "data_validation", "executions": 45, "success_rate": 0.956},
-            {"operator": "model_training", "executions": 38, "success_rate": 0.895},
-            {"operator": "model_registration", "executions": 34, "success_rate": 1.0},
-            {"operator": "custom_script", "executions": 12, "success_rate": 0.917},
+            {
+                "operator": "data_ingestion",
+                "executions": 45,
+                "success_rate": 0.978,
+            },
+            {
+                "operator": "data_validation",
+                "executions": 45,
+                "success_rate": 0.956,
+            },
+            {
+                "operator": "model_training",
+                "executions": 38,
+                "success_rate": 0.895,
+            },
+            {
+                "operator": "model_registration",
+                "executions": 34,
+                "success_rate": 1.0,
+            },
+            {
+                "operator": "custom_script",
+                "executions": 12,
+                "success_rate": 0.917,
+            },
         ],
         "resource_efficiency": {
             "avg_cpu_utilization": 0.78,
@@ -225,7 +266,9 @@ async def get_active_alerts() -> Dict:
             "id": "alert-001",
             "severity": "warning",
             "title": "High resource utilization",
-            "description": "CPU utilization has been above 80% for the last 30 minutes",
+            "description": (
+                "CPU utilization has been above 80% for the last 30 minutes"
+            ),
             "component": "resource_manager",
             "created_at": time.time() - 1800,  # 30 minutes ago
             "status": "active",
@@ -234,7 +277,9 @@ async def get_active_alerts() -> Dict:
             "id": "alert-002",
             "severity": "info",
             "title": "Long-running pipeline detected",
-            "description": "Pipeline 'ml-training-pipeline' has been running for 45 minutes",
+            "description": (
+                "Pipeline 'ml-training-pipeline' has been running for " "45 minutes"
+            ),
             "component": "scheduler",
             "created_at": time.time() - 2700,  # 45 minutes ago
             "status": "active",

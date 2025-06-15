@@ -2,10 +2,9 @@
 Experiment run management API endpoints for Experiment Tracking service
 """
 
-import json
 import logging
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
@@ -372,7 +371,8 @@ async def log_metric(run_id: str, metric_request: LogMetricRequest):
     run.updated_at = datetime.utcnow()
 
     logger.info(
-        f"Logged metric {metric_request.metric_name}={metric_request.value} for run {run_id}"
+        f"Logged metric {metric_request.metric_name}="
+        f"{metric_request.value} for run {run_id}"
     )
 
     return {"message": "Metric logged successfully"}
@@ -481,12 +481,7 @@ async def log_message(run_id: str, message: str, level: str = "info"):
         )
 
     # Mock log storage (in real implementation, store in proper logging system)
-    log_entry = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "level": level,
-        "message": message,
-        "run_id": run_id,
-    }
+    logger.info(f"[{run_id}] {level.upper()}: {message}")
 
     logger.info(f"[{run_id}] {level.upper()}: {message}")
 

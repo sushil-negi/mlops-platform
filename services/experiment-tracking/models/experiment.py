@@ -10,12 +10,10 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 from sqlalchemy import (
     JSON,
-    Boolean,
     Column,
     DateTime,
     Float,
     ForeignKey,
-    Integer,
     String,
     Text,
 )

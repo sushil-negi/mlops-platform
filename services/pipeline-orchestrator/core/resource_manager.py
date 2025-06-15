@@ -123,7 +123,8 @@ class ResourcePool:
 
         logger.info(
             f"Allocated resources for task {task_id}: "
-            f"CPU={requirements.cpu}, Memory={requirements.memory_gb}GB, GPU={requirements.gpu}"
+            f"CPU={requirements.cpu}, Memory={requirements.memory_gb}GB, "
+            f"GPU={requirements.gpu}"
         )
 
         return True
@@ -190,22 +191,26 @@ class ResourcePool:
         cpu_util = stats["cpu"]["utilization_percent"]
         if cpu_util > 90:
             recommendations.append(
-                "High CPU utilization - consider adding more CPU cores or reducing concurrent tasks"
+                "High CPU utilization - consider adding more CPU cores or "
+                "reducing concurrent tasks"
             )
         elif cpu_util < 20:
             recommendations.append(
-                "Low CPU utilization - could increase concurrent tasks for better throughput"
+                "Low CPU utilization - could increase concurrent tasks for "
+                "better throughput"
             )
 
         # Memory recommendations
         memory_util = stats["memory"]["utilization_percent"]
         if memory_util > 85:
             recommendations.append(
-                "High memory utilization - consider adding more RAM or optimizing memory usage"
+                "High memory utilization - consider adding more RAM or "
+                "optimizing memory usage"
             )
         elif memory_util < 30:
             recommendations.append(
-                "Low memory utilization - could run more memory-intensive tasks concurrently"
+                "Low memory utilization - could run more memory-intensive "
+                "tasks concurrently"
             )
 
         # GPU recommendations
@@ -213,11 +218,12 @@ class ResourcePool:
             gpu_util = stats["gpu"]["utilization_percent"]
             if gpu_util > 90:
                 recommendations.append(
-                    "High GPU utilization - consider optimizing GPU workloads or adding more GPUs"
+                    "High GPU utilization - consider optimizing GPU workloads "
+                    "or adding more GPUs"
                 )
             elif gpu_util < 20:
                 recommendations.append(
-                    "Low GPU utilization - could schedule more GPU-intensive tasks"
+                    "Low GPU utilization - could schedule more " "GPU-intensive tasks"
                 )
 
         return recommendations
@@ -344,7 +350,8 @@ class ResourceManager:
             # Could implement automatic cleanup here
 
     def _update_task_profiles(self):
-        """Update historical resource usage profiles for different task types"""
+        """Update historical resource usage profiles for different task
+        types"""
         # This would analyze completed tasks to build profiles
         # For now, just placeholder
 

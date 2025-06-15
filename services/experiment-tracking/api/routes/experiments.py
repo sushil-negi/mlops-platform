@@ -5,7 +5,7 @@ Experiment management API endpoints for Experiment Tracking service
 import logging
 import uuid
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException, Query, status
 from models.experiment import (
@@ -20,7 +20,6 @@ from models.experiment import (
     ExperimentType,
     ExperimentUpdate,
 )
-from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

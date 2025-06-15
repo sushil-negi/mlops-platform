@@ -44,22 +44,26 @@ def validate_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "core", "config.py"), "Configuration management"
+            os.path.join(base_dir, "core", "config.py"),
+            "Configuration management",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "core", "database.py"), "Database configuration"
+            os.path.join(base_dir, "core", "database.py"),
+            "Database configuration",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "core", "logging.py"), "Logging configuration"
+            os.path.join(base_dir, "core", "logging.py"),
+            "Logging configuration",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "core", "serving_engine.py"), "Serving engine"
+            os.path.join(base_dir, "core", "serving_engine.py"),
+            "Serving engine",
         )
     )
 
@@ -76,7 +80,8 @@ def validate_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "models", "feature_set.py"), "Feature set model"
+            os.path.join(base_dir, "models", "feature_set.py"),
+            "Feature set model",
         )
     )
     checks.append(
@@ -84,7 +89,8 @@ def validate_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "models", "feature_value.py"), "Feature value model"
+            os.path.join(base_dir, "models", "feature_value.py"),
+            "Feature value model",
         )
     )
     checks.append(
@@ -113,17 +119,20 @@ def validate_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "api", "routes", "__init__.py"), "Routes package"
+            os.path.join(base_dir, "api", "routes", "__init__.py"),
+            "Routes package",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "api", "routes", "health.py"), "Health endpoints"
+            os.path.join(base_dir, "api", "routes", "health.py"),
+            "Health endpoints",
         )
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "api", "routes", "features.py"), "Feature management"
+            os.path.join(base_dir, "api", "routes", "features.py"),
+            "Feature management",
         )
     )
     checks.append(
@@ -134,7 +143,8 @@ def validate_directory_structure():
     )
     checks.append(
         check_file_exists(
-            os.path.join(base_dir, "api", "routes", "serving.py"), "Feature serving"
+            os.path.join(base_dir, "api", "routes", "serving.py"),
+            "Feature serving",
         )
     )
     checks.append(
@@ -169,9 +179,11 @@ def analyze_data_models():
     print("\n📊 Data Models Analysis...")
 
     models = {
-        "Feature": "Individual feature definitions with type, validation, and lineage",
+        "Feature": (
+            "Individual feature definitions with type, validation, and lineage"
+        ),
         "FeatureSet": "Logical grouping of features with shared properties",
-        "Entity": "Business entities (user, item, etc.) for feature association",
+        "Entity": ("Business entities (user, item, etc.) for feature association"),
         "FeatureValue": "Stored feature values with temporal information",
         "ServingRequest": "API models for feature retrieval requests",
     }
@@ -363,19 +375,19 @@ def main():
         print("\n" + "=" * 60)
         print("🎉 Feature Store 2.0 Architecture is Complete!")
 
-        print(f"\n📋 Summary:")
-        print(f"   • Real-time feature serving platform")
-        print(f"   • Dual storage architecture (offline + online)")
-        print(f"   • Point-in-time correctness for ML training")
-        print(f"   • Enterprise-ready with monitoring")
-        print(f"   • Complete API for feature lifecycle")
+        print("\n📋 Summary:")
+        print("   • Real-time feature serving platform")
+        print("   • Dual storage architecture (offline + online)")
+        print("   • Point-in-time correctness for ML training")
+        print("   • Enterprise-ready with monitoring")
+        print("   • Complete API for feature lifecycle")
 
-        print(f"\n🔧 To start development:")
-        print(f"   1. Set up PostgreSQL and Redis")
-        print(f"   2. Configure S3/MinIO storage")
-        print(f"   3. Install dependencies: pip install -r requirements.txt")
-        print(f"   4. Start service: python3 main.py")
-        print(f"   5. Access API docs: http://localhost:8002/docs")
+        print("\n🔧 To start development:")
+        print("   1. Set up PostgreSQL and Redis")
+        print("   2. Configure S3/MinIO storage")
+        print("   3. Install dependencies: pip install -r requirements.txt")
+        print("   4. Start service: python3 main.py")
+        print("   5. Access API docs: http://localhost:8002/docs")
 
     else:
         print("\n❌ Architecture validation failed - missing components")

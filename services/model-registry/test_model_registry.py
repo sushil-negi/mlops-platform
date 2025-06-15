@@ -10,11 +10,12 @@ import sys
 # Add the service directory to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core.config import get_settings
-from models.artifact import ArtifactType
-from models.experiment import ExperimentStatus
-from models.model import ModelFramework
-from models.version import VersionStatus
+# Import after path modification to ensure proper module resolution
+from core.config import get_settings  # noqa: E402
+from models.artifact import ArtifactType  # noqa: E402
+from models.experiment import ExperimentStatus  # noqa: E402
+from models.model import ModelFramework  # noqa: E402
+from models.version import VersionStatus  # noqa: E402
 
 
 def test_model_creation():
@@ -87,7 +88,8 @@ def test_model_version_creation():
     print(f"✅ Model version: {version_data['version']}")
     print(f"   Status: {version_data['status'].value}")
     print(f"   Storage: {version_data['storage_uri']}")
-    print(f"   Training accuracy: {version_data['training_metrics']['accuracy']}")
+    accuracy = version_data["training_metrics"]["accuracy"]
+    print(f"   Training accuracy: {accuracy}")
 
 
 def test_experiment_creation():
@@ -119,7 +121,8 @@ def test_experiment_creation():
     print(f"✅ Experiment: {experiment_data['name']}")
     print(f"   Type: {experiment_data['experiment_type']}")
     print(f"   Status: {experiment_data['status'].value}")
-    print(f"   Best accuracy: {experiment_data['final_metrics']['best_accuracy']}")
+    best_accuracy = experiment_data["final_metrics"]["best_accuracy"]
+    print(f"   Best accuracy: {best_accuracy}")
 
 
 def test_artifact_creation():
@@ -132,7 +135,9 @@ def test_artifact_creation():
         "artifact_type": ArtifactType.CONFUSION_MATRIX,
         "file_format": "png",
         "content_type": "image/png",
-        "storage_uri": "s3://artifacts/healthcare-classifier/v1.0.0/confusion_matrix.png",
+        "storage_uri": (
+            "s3://artifacts/healthcare-classifier/v1.0.0/confusion_matrix.png"
+        ),
         "storage_backend": "s3",
         "file_size_bytes": 50000,
         "properties": {"width": 800, "height": 600, "dpi": 300},
@@ -179,9 +184,10 @@ def test_model_lineage():
 
     print(f"✅ Parent: {parent_model['name']} v{parent_model['version']}")
     print(f"   Child: {child_model['name']} v{child_model['version']}")
-    print(
-        f"   Improvement: {child_model['metrics']['accuracy'] - parent_model['metrics']['accuracy']:.2f}"
+    improvement = (
+        child_model["metrics"]["accuracy"] - parent_model["metrics"]["accuracy"]
     )
+    print(f"   Improvement: {improvement:.2f}")
 
 
 def test_mlops_workflow():
@@ -204,7 +210,7 @@ def test_mlops_workflow():
     for step in workflow_steps:
         print(f"   ✅ {step}")
 
-    print(f"\n   🎯 Complete MLOps lifecycle supported!")
+    print("\n   🎯 Complete MLOps lifecycle supported!")
 
 
 def main():

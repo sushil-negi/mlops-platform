@@ -4,7 +4,7 @@ Project management API endpoints for Experiment Tracking service
 
 import logging
 import uuid
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException, Query, status
 from models.project import (
@@ -16,7 +16,6 @@ from models.project import (
     ProjectSummary,
     ProjectUpdate,
 )
-from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
