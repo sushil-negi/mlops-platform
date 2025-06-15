@@ -98,6 +98,7 @@ jobs:
       run: |
         cat > .env << EOF
         POSTGRES_PASSWORD=test123
+        MINIO_ROOT_USER=minioadmin
         MINIO_ROOT_PASSWORD=test123456
         GRAFANA_ADMIN_PASSWORD=test123
         EOF
