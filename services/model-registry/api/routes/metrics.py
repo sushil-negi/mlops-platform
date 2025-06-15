@@ -7,9 +7,10 @@ import time
 from typing import Any, Dict
 
 import databases
+from fastapi import APIRouter, Depends
+
 from core.config import get_settings
 from core.database import get_database
-from fastapi import APIRouter, Depends
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

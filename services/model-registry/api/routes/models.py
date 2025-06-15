@@ -8,11 +8,12 @@ from datetime import datetime
 from typing import Dict, List, Optional
 
 import databases
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import BaseModel, Field
+
 from core.config import get_settings
 from core.database import get_database
-from fastapi import APIRouter, Depends, HTTPException, Query, status
 from models.model import ModelFramework, ModelStage
-from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

@@ -7,12 +7,13 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict
 
-from core.database import Base
 from sqlalchemy import JSON, Column, DateTime
 from sqlalchemy import Enum as SQLEnum
 from sqlalchemy import Float, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+
+from core.database import Base
 
 
 class ExperimentStatus(str, Enum):

@@ -6,11 +6,12 @@ import logging
 from typing import Dict, List, Optional
 from uuid import UUID
 
-from core.database import get_db
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from models.feature import Feature, FeatureStatus, FeatureType
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
+
+from core.database import get_db
+from models.feature import Feature, FeatureStatus, FeatureType
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

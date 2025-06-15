@@ -12,12 +12,13 @@ import duckdb
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+from sqlalchemy import and_, desc
+
 from core.config import settings
 from core.database import get_db
 from models.feature import Feature
 from models.feature_set import FeatureSet
 from models.feature_value import FeatureValue
-from sqlalchemy import and_, desc
 
 logger = logging.getLogger(__name__)
 

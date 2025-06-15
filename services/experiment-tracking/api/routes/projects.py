@@ -7,6 +7,7 @@ import uuid
 from typing import Any, Optional
 
 from fastapi import APIRouter, HTTPException, Query, status
+
 from models.project import (
     PROJECT_TEMPLATES,
     ProjectCreate,

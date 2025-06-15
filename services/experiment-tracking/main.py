@@ -6,12 +6,13 @@ import logging
 import time
 
 import uvicorn
-from api.routes import experiments, health, projects, runs, visualizations
-from core.config import get_settings
-from core.logging import setup_logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
+from api.routes import experiments, health, projects, runs, visualizations
+from core.config import get_settings
+from core.logging import setup_logging
 
 # Setup logging
 setup_logging()

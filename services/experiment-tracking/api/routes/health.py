@@ -6,9 +6,10 @@ import logging
 import time
 from typing import Any, Dict
 
-from core.config import get_settings
 from fastapi import APIRouter
 from pydantic import BaseModel
+
+from core.config import get_settings
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

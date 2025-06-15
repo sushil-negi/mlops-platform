@@ -6,9 +6,10 @@ import logging
 import time
 from typing import Dict
 
-from core.database import database
 from fastapi import APIRouter, status
 from sqlalchemy import text
+
+from core.database import database
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

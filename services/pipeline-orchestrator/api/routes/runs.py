@@ -5,9 +5,10 @@ Pipeline run management API endpoints
 import logging
 from typing import Dict, List, Optional
 
-from api.routes.pipelines import pipelines_store
 from fastapi import APIRouter, HTTPException, Query, status
 from pydantic import BaseModel, Field
+
+from api.routes.pipelines import pipelines_store
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

@@ -6,12 +6,13 @@ Centralized feature repository with versioning, lineage, and serving
 from contextlib import asynccontextmanager
 
 import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from api.routes import feature_sets, features, health, monitoring, serving
 from core.config import settings
 from core.database import init_db
 from core.logging import setup_logging
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 # Setup logging
 logger = setup_logging()

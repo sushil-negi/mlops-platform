@@ -7,16 +7,17 @@ import time
 from datetime import datetime
 from typing import Dict
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
 from core.database import get_db
 from core.serving_engine import ServingEngine
-from fastapi import APIRouter, Depends, HTTPException, status
 from models.serving_request import (
     BatchServingRequest,
     FeatureServingResponse,
     PointInTimeRequest,
     ServingRequest,
 )
-from sqlalchemy.orm import Session
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

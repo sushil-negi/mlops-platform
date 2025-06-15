@@ -8,15 +8,16 @@ import os
 from contextlib import asynccontextmanager
 from typing import Optional
 
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+
 from api.routes import health, monitoring, pipelines, runs
 from core.config import get_settings
 from core.database import database, init_db
 from core.logging import setup_logging
 from core.scheduler import PipelineScheduler
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 
 # Setup logging
 setup_logging()

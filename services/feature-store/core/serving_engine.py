@@ -10,10 +10,11 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 import redis.asyncio as redis
+from redis.asyncio import ConnectionPool
+
 from core.config import settings
 from core.logging import log_feature_access
 from models.feature_set import FeatureSet
-from redis.asyncio import ConnectionPool
 
 logger = logging.getLogger(__name__)
 
