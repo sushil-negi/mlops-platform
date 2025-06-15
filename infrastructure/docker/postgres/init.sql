@@ -15,13 +15,10 @@ GRANT ALL PRIVILEGES ON DATABASE feature_store TO mlops;
 GRANT ALL PRIVILEGES ON DATABASE pipeline_orchestrator TO mlops;
 GRANT ALL PRIVILEGES ON DATABASE ab_testing TO mlops;
 
--- Create schemas for different services
-\c mlflow;
+-- Initialize Model Registry database
+\c model_registry;
 
--- Model Registry tables
-CREATE SCHEMA IF NOT EXISTS model_registry;
-
-CREATE TABLE IF NOT EXISTS model_registry.models (
+CREATE TABLE IF NOT EXISTS models (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     version VARCHAR(100) NOT NULL,
@@ -35,9 +32,9 @@ CREATE TABLE IF NOT EXISTS model_registry.models (
     UNIQUE(name, version)
 );
 
-CREATE TABLE IF NOT EXISTS model_registry.deployments (
+CREATE TABLE IF NOT EXISTS deployments (
     id SERIAL PRIMARY KEY,
-    model_id INTEGER REFERENCES model_registry.models(id),
+    model_id INTEGER REFERENCES models(id),
     environment VARCHAR(50) NOT NULL,
     status VARCHAR(50) DEFAULT 'pending',
     endpoint_url TEXT,
@@ -46,10 +43,10 @@ CREATE TABLE IF NOT EXISTS model_registry.deployments (
     config JSONB
 );
 
--- Pipeline Orchestrator tables
-CREATE SCHEMA IF NOT EXISTS pipeline_orchestrator;
+-- Initialize Pipeline Orchestrator database
+\c pipeline_orchestrator;
 
-CREATE TABLE IF NOT EXISTS pipeline_orchestrator.pipelines (
+CREATE TABLE IF NOT EXISTS pipelines (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
@@ -59,9 +56,9 @@ CREATE TABLE IF NOT EXISTS pipeline_orchestrator.pipelines (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS pipeline_orchestrator.pipeline_runs (
+CREATE TABLE IF NOT EXISTS pipeline_runs (
     id SERIAL PRIMARY KEY,
-    pipeline_id INTEGER REFERENCES pipeline_orchestrator.pipelines(id),
+    pipeline_id INTEGER REFERENCES pipelines(id),
     status VARCHAR(50) DEFAULT 'pending',
     started_at TIMESTAMP,
     completed_at TIMESTAMP,
@@ -70,46 +67,26 @@ CREATE TABLE IF NOT EXISTS pipeline_orchestrator.pipeline_runs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Monitoring tables
-CREATE SCHEMA IF NOT EXISTS monitoring;
-
-CREATE TABLE IF NOT EXISTS monitoring.model_metrics (
-    id SERIAL PRIMARY KEY,
-    model_id INTEGER,
-    metric_name VARCHAR(255) NOT NULL,
-    metric_value DOUBLE PRECISION,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    environment VARCHAR(50),
-    metadata JSONB
-);
-
-CREATE TABLE IF NOT EXISTS monitoring.alerts (
-    id SERIAL PRIMARY KEY,
-    model_id INTEGER,
-    alert_type VARCHAR(100) NOT NULL,
-    severity VARCHAR(20) DEFAULT 'medium',
-    message TEXT,
-    status VARCHAR(20) DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    resolved_at TIMESTAMP
-);
-
 -- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_models_name_version ON model_registry.models(name, version);
-CREATE INDEX IF NOT EXISTS idx_deployments_model_env ON model_registry.deployments(model_id, environment);
-CREATE INDEX IF NOT EXISTS idx_pipeline_runs_status ON pipeline_orchestrator.pipeline_runs(status);
-CREATE INDEX IF NOT EXISTS idx_model_metrics_timestamp ON monitoring.model_metrics(timestamp);
-CREATE INDEX IF NOT EXISTS idx_alerts_status ON monitoring.alerts(status);
+\c model_registry;
+CREATE INDEX IF NOT EXISTS idx_models_name_version ON models(name, version);
+CREATE INDEX IF NOT EXISTS idx_deployments_model_env ON deployments(model_id, environment);
 
--- Insert sample data
-INSERT INTO model_registry.models (name, version, description, status, metadata, performance_metrics) 
+\c pipeline_orchestrator;
+CREATE INDEX IF NOT EXISTS idx_pipeline_runs_status ON pipeline_runs(status);
+
+-- Insert sample data in Model Registry
+\c model_registry;
+INSERT INTO models (name, version, description, status, metadata, performance_metrics) 
 VALUES 
     ('demo-llm', '1.0.0', 'Demo Language Model for MLOps showcase', 'production', 
      '{"architecture": "GPT-2", "parameters": "124M", "training_data": "demo_dataset"}',
      '{"accuracy": 0.95, "latency_ms": 100, "throughput_rps": 10}')
 ON CONFLICT (name, version) DO NOTHING;
 
-INSERT INTO pipeline_orchestrator.pipelines (name, description, config)
+-- Insert sample data in Pipeline Orchestrator
+\c pipeline_orchestrator;
+INSERT INTO pipelines (name, description, config)
 VALUES 
     ('demo-llm-training', 'Training pipeline for demo LLM model', 
      '{"stages": ["data_prep", "training", "evaluation", "deployment"], "trigger": "manual"}'),

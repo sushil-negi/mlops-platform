@@ -20,9 +20,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   # Experiment Tracking Service
   experiment-tracking:
@@ -33,6 +34,10 @@ services:
       - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/experiment_tracking
       - REDIS_URL=redis://redis:6379
       - MODEL_REGISTRY_URL=http://model-registry:8000
+      - minio_endpoint=minio:9000
+      - minio_access_key=${MINIO_ROOT_USER:-minioadmin}
+      - minio_secret_key=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - minio_secure=false
     depends_on:
       - postgres
       - redis
@@ -41,9 +46,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   # Feature Store Service
   feature-store:
@@ -53,6 +59,10 @@ services:
     environment:
       - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/feature_store
       - REDIS_URL=redis://redis:6379
+      - S3_ENDPOINT=http://minio:9000
+      - S3_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - S3_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - S3_USE_SSL=false
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
       - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
@@ -64,9 +74,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   # Pipeline Orchestrator Service
   pipeline-orchestrator:
@@ -79,6 +90,10 @@ services:
       - MODEL_REGISTRY_URL=http://model-registry:8000
       - EXPERIMENT_TRACKING_URL=http://experiment-tracking:8003
       - FEATURE_STORE_URL=http://feature-store:8002
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - MINIO_SECURE=false
     depends_on:
       - postgres
       - redis
@@ -89,9 +104,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   # A/B Testing Service
   ab-testing:
@@ -112,9 +128,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   # Infrastructure Services
   postgres:
@@ -190,9 +207,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   grafana:
     image: grafana/grafana:latest
@@ -211,9 +229,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -230,9 +249,10 @@ services:
       - mlops-platform
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9093/-/healthy"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
 
 volumes:
   postgres_data:

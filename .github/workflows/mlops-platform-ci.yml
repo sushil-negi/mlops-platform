@@ -101,6 +101,10 @@ jobs:
         MINIO_ROOT_USER=minioadmin
         MINIO_ROOT_PASSWORD=test123456
         GRAFANA_ADMIN_PASSWORD=test123
+        SECRET_KEY=test-secret-key-for-ci
+        API_SECRET_KEY=test-api-secret-key
+        JWT_SECRET_KEY=test-jwt-secret-key
+        ENVIRONMENT=testing
         EOF
     
     - name: Start infrastructure services with docker-compose
@@ -240,6 +244,10 @@ jobs:
         MINIO_ROOT_USER=minioadmin
         MINIO_ROOT_PASSWORD=test123456
         GRAFANA_ADMIN_PASSWORD=test123
+        SECRET_KEY=test-secret-key-for-ci
+        API_SECRET_KEY=test-api-secret-key
+        JWT_SECRET_KEY=test-jwt-secret-key
+        ENVIRONMENT=testing
         EOF
     
     - name: Start MLOps Platform services
@@ -259,7 +267,7 @@ jobs:
         echo "Waiting for PostgreSQL..."
         timeout 300 bash -c 'until PGPASSWORD=test123 pg_isready -h localhost -U mlops -d mlops_platform; do sleep 5; done'
         echo "Waiting for Redis..."
-        timeout 300 bash -c 'until docker run --rm --network host redis:7-alpine redis-cli -h localhost ping; do sleep 5; done'
+        timeout 300 bash -c 'until docker compose -f docker-compose.platform.yml exec -T redis redis-cli ping; do sleep 5; done'
         echo "Waiting for MinIO..."
         timeout 300 bash -c 'until curl -f http://localhost:9000/minio/health/live; do sleep 5; done'
         echo "Infrastructure services are ready!"
