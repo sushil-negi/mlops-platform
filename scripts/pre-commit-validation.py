@@ -5,14 +5,12 @@ Mimics the full CI/CD pipeline for local testing before commits
 """
 
 import json
-import os
 import subprocess
 import sys
-import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 
 @dataclass
@@ -254,9 +252,15 @@ class PreCommitValidator:
 
                 if high_severity > 0:
                     success = False
-                    output = f"Security issues found: {high_severity} HIGH, {medium_severity} MEDIUM severity"
+                    output = (
+                        f"Security issues found: {high_severity} HIGH, "
+                        f"{medium_severity} MEDIUM severity"
+                    )
                 else:
-                    output = f"Security scan passed: {medium_severity} MEDIUM severity issues (allowed)"
+                    output = (
+                        f"Security scan passed: {medium_severity} MEDIUM "
+                        "severity issues (allowed)"
+                    )
             except json.JSONDecodeError:
                 output = "Bandit scan completed"
         else:
@@ -448,7 +452,10 @@ class PreCommitValidator:
 
             if missing_services:
                 success = False
-                output = f"Missing services: {', '.join(missing_services)}\nRunning services:\n{stdout}"
+                output = (
+                    f"Missing services: {', '.join(missing_services)}\n"
+                    f"Running services:\n{stdout}"
+                )
             else:
                 output = f"All required services running:\n{stdout}"
         else:
@@ -535,7 +542,8 @@ class PreCommitValidator:
                         for pattern in sensitive_patterns:
                             if pattern in file_lower and "example" not in file_lower:
                                 issues.append(
-                                    f"Potential sensitive data in {file_path}: contains '{pattern}'"
+                                    f"Potential sensitive data in {file_path}: "
+                                    f"contains '{pattern}'"
                                 )
 
         duration = time.time() - start_time
@@ -545,9 +553,9 @@ class PreCommitValidator:
             passed=len(issues) == 0,
             duration=duration,
             output=(
-                f"Git status clean"
+                "Git status clean"
                 if len(issues) == 0
-                else f"Issues found:\n" + "\n".join(issues)
+                else "Issues found:\n" + "\n".join(issues)
             ),
             error=None,
         )
@@ -637,7 +645,7 @@ class PreCommitValidator:
             # Truncate long output
             output_lines = result.output.split("\n")
             if len(output_lines) > 10:
-                print(f"   Output (first 10 lines):")
+                print("   Output (first 10 lines):")
                 for line in output_lines[:10]:
                     print(f"   {line}")
                 print(f"   ... ({len(output_lines) - 10} more lines)")
@@ -651,7 +659,7 @@ class PreCommitValidator:
         total_duration = sum(result.duration for result in self.results)
 
         print("\n" + "=" * 60)
-        print(f"🎯 VALIDATION SUMMARY")
+        print("🎯 VALIDATION SUMMARY")
         print(f"   Total Tests: {total}")
         print(f"   Passed: {passed}")
         print(f"   Failed: {total - passed}")

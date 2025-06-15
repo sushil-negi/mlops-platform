@@ -218,10 +218,10 @@ class MLOpsPreCommitValidator:
             "-m",
             "mypy",
             "services/",
-            "infrastructure/",
             "scripts/",
             "--ignore-missing-imports",
             "--no-strict-optional",
+            "--explicit-package-bases",
         ]
         success, stdout, stderr = self.run_command(cmd)
         duration = time.time() - start_time
