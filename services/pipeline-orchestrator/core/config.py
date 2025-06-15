@@ -34,9 +34,15 @@ class Settings(BaseSettings):
     REDIS_TASK_QUEUE: str = Field(default="mlops_tasks", env="REDIS_TASK_QUEUE")
 
     # Storage settings (for pipeline definitions and artifacts)
-    STORAGE_ENDPOINT: str = Field(..., env="MINIO_ENDPOINT")
-    STORAGE_ACCESS_KEY: str = Field(..., env="MINIO_ACCESS_KEY")
-    STORAGE_SECRET_KEY: str = Field(..., env="MINIO_SECRET_KEY")
+    STORAGE_ENDPOINT: str = Field(
+        default_factory=lambda: os.getenv("MINIO_ENDPOINT", "")
+    )
+    STORAGE_ACCESS_KEY: str = Field(
+        default_factory=lambda: os.getenv("MINIO_ACCESS_KEY", "")
+    )
+    STORAGE_SECRET_KEY: str = Field(
+        default_factory=lambda: os.getenv("MINIO_SECRET_KEY", "")
+    )
     STORAGE_SECURE: bool = Field(default=False, env="MINIO_SECURE")
     STORAGE_BUCKET_PIPELINES: str = Field(
         default="pipelines", env="STORAGE_BUCKET_PIPELINES"

@@ -85,7 +85,9 @@ services:
 
   # Pipeline Orchestrator Service
   pipeline-orchestrator:
-    build: ./services/pipeline-orchestrator
+    build: 
+      context: ./services/pipeline-orchestrator
+      dockerfile: Dockerfile.ci
     ports:
       - "8004:8004"
     environment:
