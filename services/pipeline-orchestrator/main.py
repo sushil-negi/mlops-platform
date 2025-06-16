@@ -17,8 +17,8 @@ from api.routes import health, monitoring, pipelines, runs
 from core.config import get_settings
 from core.database import database, init_db
 from core.logging import setup_logging
-from core.scheduler import PipelineScheduler
 from core.metrics import create_metrics_response
+from core.scheduler import PipelineScheduler
 
 # Setup logging
 setup_logging()
