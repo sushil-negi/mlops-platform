@@ -100,12 +100,13 @@ def test_core_services() -> List[bool]:
     try:
         import psycopg2
 
+        import os
         conn = psycopg2.connect(
             host="localhost",
             port=5432,
             database="mlflow",
             user="mlflow",
-            password="mlflow123",
+            password=os.getenv("POSTGRES_PASSWORD", "mlflow123"),
         )
         conn.close()
         print("✓ PostgreSQL is accessible")

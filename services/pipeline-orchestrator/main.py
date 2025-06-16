@@ -18,6 +18,7 @@ from core.config import get_settings
 from core.database import database, init_db
 from core.logging import setup_logging
 from core.scheduler import PipelineScheduler
+from core.metrics import create_metrics_response
 
 # Setup logging
 setup_logging()
@@ -129,6 +130,12 @@ app.include_router(health.router, prefix="/health", tags=["Health"])
 app.include_router(monitoring.router, prefix="/monitoring", tags=["Monitoring"])
 app.include_router(pipelines.router, prefix="/api/v1/pipelines", tags=["Pipelines"])
 app.include_router(runs.router, prefix="/api/v1/runs", tags=["Pipeline Runs"])
+
+
+@app.get("/metrics")
+async def metrics():
+    """Prometheus metrics endpoint"""
+    return create_metrics_response()
 
 
 @app.get("/")

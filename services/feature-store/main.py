@@ -14,6 +14,7 @@ from api.routes import feature_sets, features, health, monitoring, serving
 from core.config import settings
 from core.database import init_db
 from core.logging import setup_logging
+from core.metrics import create_metrics_response
 
 # Setup logging
 logger = setup_logging()
@@ -113,6 +114,12 @@ app.include_router(
 )
 app.include_router(serving.router, prefix="/api/v1/serving", tags=["serving"])
 app.include_router(monitoring.router, prefix="/monitoring", tags=["monitoring"])
+
+
+@app.get("/metrics")
+async def metrics():
+    """Prometheus metrics endpoint"""
+    return create_metrics_response()
 
 
 @app.get("/")

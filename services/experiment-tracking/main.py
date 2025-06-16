@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 from api.routes import experiments, health, projects, runs, visualizations
 from core.config import get_settings
 from core.logging import setup_logging
+from core.metrics import create_metrics_response
 
 # Setup logging
 setup_logging()
@@ -76,6 +77,12 @@ app.include_router(runs.router, prefix="/api/v1/runs", tags=["runs"])
 app.include_router(
     visualizations.router, prefix="/api/v1/visualizations", tags=["visualizations"]
 )
+
+
+@app.get("/metrics")
+async def metrics():
+    """Prometheus metrics endpoint"""
+    return create_metrics_response()
 
 
 # Root endpoint

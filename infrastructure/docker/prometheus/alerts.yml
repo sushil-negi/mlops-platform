@@ -1,76 +1,65 @@
 groups:
-  - name: healthcare_ai_safety
+  - name: mlops_platform_services
     interval: 30s
     rules:
-      # Critical: Crisis detection rate below threshold
-      - alert: CrisisDetectionRateLow
-        expr: healthcare_ai_crisis_detection_rate < 0.99
-        for: 1m
-        labels:
-          severity: critical
-          team: healthcare-ai
-        annotations:
-          summary: "Crisis detection rate critically low: {{ $value }}"
-          description: "Healthcare AI crisis detection rate is {{ $value }}, below 99% threshold. This is a safety-critical issue."
-          
-      # Critical: Model accuracy below threshold
-      - alert: ModelAccuracyLow
-        expr: healthcare_ai_model_accuracy < 0.90
-        for: 5m
-        labels:
-          severity: critical
-          team: healthcare-ai
-        annotations:
-          summary: "Model accuracy below threshold: {{ $value }}"
-          description: "Healthcare AI model accuracy is {{ $value }}, below 90% threshold. Consider model retirement."
-          
-      # Warning: Response time high
-      - alert: HighResponseTime
-        expr: healthcare_ai_response_time_seconds > 0.5
-        for: 5m
-        labels:
-          severity: warning
-          team: healthcare-ai
-        annotations:
-          summary: "Response time high: {{ $value }}s"
-          description: "Healthcare AI response time is {{ $value }}s, above 500ms threshold."
-          
-      # Critical: Empathy score low
-      - alert: EmpathyScoreLow
-        expr: healthcare_ai_empathy_score < 0.65
-        for: 5m
-        labels:
-          severity: critical
-          team: healthcare-ai
-        annotations:
-          summary: "Empathy score below threshold: {{ $value }}"
-          description: "Healthcare AI empathy score is {{ $value }}, below 65% threshold."
-          
-      # Warning: High error rate
-      - alert: HighErrorRate
-        expr: rate(healthcare_ai_requests_total{status="error"}[5m]) > 0.05
-        for: 5m
-        labels:
-          severity: warning
-          team: healthcare-ai
-        annotations:
-          summary: "Error rate above 5%"
-          description: "Healthcare AI error rate is {{ $value }}, indicating potential issues."
-          
-  - name: infrastructure_health
-    interval: 30s
-    rules:
-      # Warning: MLflow down
-      - alert: MLflowDown
-        expr: up{job="mlflow"} == 0
+      # Critical: Service Down
+      - alert: MLOpsServiceDown
+        expr: up{job=~"model-registry|feature-store|experiment-tracking|pipeline-orchestrator|ab-testing"} == 0
         for: 2m
+        labels:
+          severity: critical
+          team: mlops
+        annotations:
+          summary: "MLOps service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} has been down for more than 2 minutes. Instance: {{ $labels.instance }}"
+          
+      # Warning: High API Response Time
+      - alert: HighAPIResponseTime
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (job, le)) > 0.2
+        for: 5m
         labels:
           severity: warning
           team: mlops
         annotations:
-          summary: "MLflow tracking server is down"
-          description: "MLflow has been down for more than 2 minutes."
+          summary: "High API response time for {{ $labels.job }}"
+          description: "95th percentile response time for {{ $labels.job }} is {{ $value }}s, above 200ms threshold."
           
+      # Critical: Model Registry Storage Full
+      - alert: ModelRegistryStorageFull
+        expr: minio_disk_usage_percent{job="minio"} > 90
+        for: 5m
+        labels:
+          severity: critical
+          team: mlops
+        annotations:
+          summary: "Model Registry storage above 90%"
+          description: "MinIO storage usage is {{ $value }}%, immediate action required."
+          
+      # Warning: Feature Store Query Latency
+      - alert: FeatureStoreQueryLatency
+        expr: feature_store_query_duration_seconds{quantile="0.95"} > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: mlops
+        annotations:
+          summary: "Feature Store query latency high"
+          description: "95th percentile query latency is {{ $value }}s, above 500ms threshold."
+          
+      # Critical: Pipeline Failure Rate High
+      - alert: PipelineFailureRateHigh
+        expr: rate(pipeline_executions_total{status="failed"}[5m]) / rate(pipeline_executions_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+          team: mlops
+        annotations:
+          summary: "Pipeline failure rate above 10%"
+          description: "Pipeline failure rate is {{ $value }}, indicating system issues."
+          
+  - name: infrastructure_health
+    interval: 30s
+    rules:
       # Critical: Database down
       - alert: PostgreSQLDown
         expr: up{job="postgres"} == 0
@@ -82,16 +71,49 @@ groups:
           summary: "PostgreSQL database is down"
           description: "PostgreSQL has been down for more than 1 minute."
           
+      # Critical: Redis down
+      - alert: RedisDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: mlops
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis has been down for more than 1 minute."
+          
+      # Critical: MinIO down
+      - alert: MinIODown
+        expr: up{job="minio"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          team: mlops
+        annotations:
+          summary: "MinIO object storage is down"
+          description: "MinIO has been down for more than 2 minutes."
+          
       # Warning: High memory usage
       - alert: HighMemoryUsage
-        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) > 0.90
+        expr: container_memory_usage_bytes{name=~"mlops-platform.*"} / container_spec_memory_limit_bytes > 0.9
         for: 5m
         labels:
           severity: warning
           team: infrastructure
         annotations:
-          summary: "Memory usage above 90%"
-          description: "System memory usage is {{ $value }}%, consider scaling."
+          summary: "Container {{ $labels.name }} memory usage above 90%"
+          description: "Container memory usage is {{ $value }}%, consider scaling."
+          
+      # Warning: High CPU usage
+      - alert: HighCPUUsage
+        expr: rate(container_cpu_usage_seconds_total{name=~"mlops-platform.*"}[5m]) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          team: infrastructure
+        annotations:
+          summary: "Container {{ $labels.name }} CPU usage above 90%"
+          description: "Container CPU usage is high, consider scaling."
           
   - name: ab_testing_safety
     interval: 15s

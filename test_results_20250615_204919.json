@@ -1,0 +1,386 @@
+{
+  "health_checks": {
+    "model-registry": {
+      "status": "healthy",
+      "endpoint": "/health/",
+      "response_time": 0.030325,
+      "data": {
+        "status": "unhealthy",
+        "timestamp": 1750034959.0573072,
+        "version": "1.0.0",
+        "service": "model-registry",
+        "checks": {
+          "database": {
+            "status": "healthy",
+            "checked_at": 1750034959.057272
+          },
+          "redis": {
+            "status": "unhealthy",
+            "checked_at": 1750034959.0572836
+          },
+          "storage": {
+            "status": "healthy",
+            "checked_at": 1750034959.0572839
+          }
+        }
+      }
+    },
+    "feature-store": {
+      "status": "healthy",
+      "endpoint": "/health",
+      "response_time": 0.020928,
+      "data": {
+        "status": "healthy",
+        "service": "feature-store",
+        "version": "2.0.0",
+        "timestamp": 1750034959.081857
+      }
+    },
+    "experiment-tracking": {
+      "status": "healthy",
+      "endpoint": "/health/",
+      "response_time": 0.004644,
+      "data": {
+        "status": "healthy",
+        "timestamp": 1750034959.109576,
+        "version": "2.0.0",
+        "service": "experiment-tracking",
+        "checks": {
+          "database": {
+            "status": "healthy",
+            "checked_at": 1750034959.1093872
+          },
+          "redis": {
+            "status": "healthy",
+            "checked_at": 1750034959.1093917
+          },
+          "storage": {
+            "status": "healthy",
+            "checked_at": 1750034959.109392
+          },
+          "model_registry": {
+            "status": "healthy",
+            "url": "http://localhost:8000",
+            "checked_at": 1750034959.1094713
+          },
+          "pipeline_orchestrator": {
+            "status": "healthy",
+            "url": "http://localhost:8001",
+            "checked_at": 1750034959.109489
+          },
+          "feature_store": {
+            "status": "healthy",
+            "url": "http://localhost:8002",
+            "checked_at": 1750034959.1094956
+          }
+        }
+      }
+    },
+    "pipeline-orchestrator": {
+      "status": "healthy",
+      "endpoint": "/health/",
+      "response_time": 0.041295,
+      "data": {
+        "status": "healthy",
+        "timestamp": 1750034959.157969,
+        "version": "2.0.0",
+        "service": "pipeline-orchestrator",
+        "checks": {
+          "database": {
+            "status": "healthy",
+            "checked_at": 1750034959.1579537
+          },
+          "scheduler": {
+            "status": "healthy",
+            "checked_at": 1750034959.157955
+          }
+        }
+      }
+    },
+    "ab-testing": {
+      "status": "healthy",
+      "endpoint": "/health",
+      "response_time": 0.003174,
+      "data": {
+        "status": "healthy",
+        "redis_connected": true,
+        "timestamp": "2025-06-16T00:49:19.166925"
+      }
+    },
+    "prometheus": {
+      "status": "healthy",
+      "endpoint": "/-/healthy",
+      "response_time": 0.003342,
+      "data": {
+        "message": "Prometheus Server is Healthy."
+      }
+    },
+    "grafana": {
+      "status": "healthy",
+      "endpoint": "/api/health",
+      "response_time": 0.002956,
+      "data": {
+        "database": "ok",
+        "version": "12.0.1+security-01",
+        "commit": "ff20b06681749873999bb0a8e365f24fddaee33f"
+      }
+    },
+    "alertmanager": {
+      "status": "healthy",
+      "endpoint": "/-/healthy",
+      "response_time": 0.003352,
+      "data": {
+        "message": "OK"
+      }
+    }
+  },
+  "api_endpoints": {
+    "model-registry": {
+      "status": "passed",
+      "endpoints": {
+        "/docs": {
+          "status_code": 200,
+          "response_time": 0.005346,
+          "accessible": true
+        },
+        "/api/v1/models": {
+          "status_code": 307,
+          "response_time": 0.001037,
+          "accessible": true
+        }
+      },
+      "success_rate": "2/2"
+    },
+    "feature-store": {
+      "status": "passed",
+      "endpoints": {
+        "/docs": {
+          "status_code": 200,
+          "response_time": 0.003259,
+          "accessible": true
+        },
+        "/api/v1/features": {
+          "status_code": 307,
+          "response_time": 0.001687,
+          "accessible": true
+        },
+        "/api/v1/feature-sets": {
+          "status_code": 307,
+          "response_time": 0.000954,
+          "accessible": true
+        }
+      },
+      "success_rate": "3/3"
+    },
+    "experiment-tracking": {
+      "status": "passed",
+      "endpoints": {
+        "/docs": {
+          "status_code": 200,
+          "response_time": 0.004213,
+          "accessible": true
+        },
+        "/api/v1/projects": {
+          "status_code": 307,
+          "response_time": 0.001243,
+          "accessible": true
+        },
+        "/api/v1/experiments": {
+          "status_code": 307,
+          "response_time": 0.001349,
+          "accessible": true
+        }
+      },
+      "success_rate": "3/3"
+    },
+    "pipeline-orchestrator": {
+      "status": "passed",
+      "endpoints": {
+        "/docs": {
+          "status_code": 200,
+          "response_time": 0.00322,
+          "accessible": true
+        },
+        "/api/v1/pipelines": {
+          "status_code": 307,
+          "response_time": 0.001274,
+          "accessible": true
+        },
+        "/api/v1/runs": {
+          "status_code": 307,
+          "response_time": 0.001025,
+          "accessible": true
+        }
+      },
+      "success_rate": "3/3"
+    },
+    "ab-testing": {
+      "status": "passed",
+      "endpoints": {
+        "/docs": {
+          "status_code": 200,
+          "response_time": 0.003338,
+          "accessible": true
+        },
+        "/api/experiments": {
+          "status_code": 404,
+          "response_time": 0.003387,
+          "accessible": true
+        }
+      },
+      "success_rate": "2/2"
+    },
+    "prometheus": {
+      "status": "passed",
+      "endpoints": {
+        "/-/healthy": {
+          "status_code": 200,
+          "response_time": 0.00352,
+          "accessible": true
+        },
+        "/api/v1/query": {
+          "status_code": 400,
+          "response_time": 0.004782,
+          "accessible": true
+        }
+      },
+      "success_rate": "2/2"
+    },
+    "grafana": {
+      "status": "passed",
+      "endpoints": {
+        "/api/health": {
+          "status_code": 200,
+          "response_time": 0.003759,
+          "accessible": true
+        },
+        "/api/datasources": {
+          "status_code": 401,
+          "response_time": 0.003171,
+          "accessible": true
+        }
+      },
+      "success_rate": "2/2"
+    },
+    "alertmanager": {
+      "status": "passed",
+      "endpoints": {
+        "/-/healthy": {
+          "status_code": 200,
+          "response_time": 0.004513,
+          "accessible": true
+        },
+        "/api/v1/status": {
+          "status_code": 410,
+          "response_time": 0.002531,
+          "accessible": true
+        }
+      },
+      "success_rate": "2/2"
+    }
+  },
+  "integration_tests": {
+    "prometheus_targets": {
+      "status": "checked",
+      "targets": {
+        "ab-testing": "down",
+        "experiment-tracking": "up",
+        "feature-store": "up",
+        "grafana": "up",
+        "minio": "down",
+        "model-registry": "down",
+        "pipeline-orchestrator": "up",
+        "postgres": "down",
+        "prometheus": "up",
+        "redis": "down"
+      },
+      "total_targets": 10
+    }
+  },
+  "performance_tests": {
+    "model-registry": {
+      "avg_response_time": 0.001639413833618164,
+      "min_response_time": 0.0010988712310791016,
+      "max_response_time": 0.0031080245971679688,
+      "requests_tested": 5
+    },
+    "feature-store": {
+      "avg_response_time": 0.0022333621978759765,
+      "min_response_time": 0.0013499259948730469,
+      "max_response_time": 0.0035028457641601562,
+      "requests_tested": 5
+    },
+    "experiment-tracking": {
+      "avg_response_time": 0.002119159698486328,
+      "min_response_time": 0.0014777183532714844,
+      "max_response_time": 0.003926992416381836,
+      "requests_tested": 5
+    },
+    "pipeline-orchestrator": {
+      "avg_response_time": 0.0016125679016113282,
+      "min_response_time": 0.0012569427490234375,
+      "max_response_time": 0.0028200149536132812,
+      "requests_tested": 5
+    },
+    "ab-testing": {
+      "avg_response_time": 0.0022821903228759767,
+      "min_response_time": 0.0012080669403076172,
+      "max_response_time": 0.004751920700073242,
+      "requests_tested": 5
+    },
+    "prometheus": {
+      "avg_response_time": 0.0017422199249267577,
+      "min_response_time": 0.001291036605834961,
+      "max_response_time": 0.003099203109741211,
+      "requests_tested": 5
+    },
+    "grafana": {
+      "avg_response_time": 0.0021782875061035155,
+      "min_response_time": 0.0016372203826904297,
+      "max_response_time": 0.003324270248413086,
+      "requests_tested": 5
+    },
+    "alertmanager": {
+      "avg_response_time": 0.002154636383056641,
+      "min_response_time": 0.0013871192932128906,
+      "max_response_time": 0.004565715789794922,
+      "requests_tested": 5
+    }
+  },
+  "infrastructure_tests": {
+    "postgres": {
+      "status": "connected",
+      "version": "PostgreSQL 13.21 (Debian 13.21-1.pgdg120+1) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit"
+    },
+    "redis": {
+      "status": "connected",
+      "version": "7.4.4",
+      "memory_usage": "1.07M"
+    },
+    "minio": {
+      "status": "healthy",
+      "response_time": 0.004782
+    }
+  },
+  "security_tests": {
+    "password_security": {
+      "status": "passed",
+      "issues": []
+    }
+  },
+  "metrics": {
+    "status": "completed",
+    "services": {
+      "feature-store": {
+        "status": "available",
+        "metrics_count": 11,
+        "response_size": 1455
+      },
+      "ab-testing": {
+        "status": "available",
+        "metrics_count": 11,
+        "response_size": 1424
+      }
+    }
+  }
+}

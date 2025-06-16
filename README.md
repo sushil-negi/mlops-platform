@@ -79,7 +79,7 @@ curl http://localhost:3000/api/health # Grafana
 - **Pipeline Orchestrator API**: http://localhost:8004/docs
 - **A/B Testing API**: http://localhost:8090/docs
 - **Prometheus**: http://localhost:9090
-- **Grafana**: http://localhost:3000 (admin/admin)
+- **Grafana**: http://localhost:3001 (admin/[see .env])
 
 ## 🏢 **Enterprise Architecture**
 
@@ -123,7 +123,7 @@ MLOPS_AB_TESTING_URL=http://localhost:8090
 
 # Monitoring Configuration
 MLOPS_PROMETHEUS_URL=http://localhost:9090
-MLOPS_GRAFANA_URL=http://localhost:3000
+MLOPS_GRAFANA_URL=http://localhost:3001
 
 # Authentication (when enabled)
 MLOPS_API_KEY=${MLOPS_API_KEY}

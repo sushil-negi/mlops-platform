@@ -11,71 +11,62 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  # Healthcare AI Model
-  - job_name: 'healthcare-ai'
-    static_configs:
-      - targets: ['healthcare-ai:8000', 'mlops-project-healthcare-ai-1:8000']
-    metrics_path: /metrics
-    scrape_interval: 10s
-    
-  # Healthcare AI Kubernetes Pods
-  - job_name: 'healthcare-ai-k8s'
-    kubernetes_sd_configs:
-      - role: pod
-        namespaces:
-          names:
-            - healthcare-ai-staging
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_pod_label_app]
-        action: keep
-        regex: healthcare-ai
-      - source_labels: [__meta_kubernetes_pod_name]
-        target_label: pod
-      - source_labels: [__meta_kubernetes_namespace]
-        target_label: namespace
-
-  # Model Registry
+  # Model Registry Service
   - job_name: 'model-registry'
     static_configs:
       - targets: ['model-registry:8000']
     metrics_path: /metrics
-    scrape_interval: 30s
+    scrape_interval: 15s
 
-  # Pipeline Orchestrator
+  # Feature Store Service
+  - job_name: 'feature-store'
+    static_configs:
+      - targets: ['feature-store:8002']
+    metrics_path: /metrics
+    scrape_interval: 15s
+
+  # Experiment Tracking Service
+  - job_name: 'experiment-tracking'
+    static_configs:
+      - targets: ['experiment-tracking:8003']
+    metrics_path: /metrics
+    scrape_interval: 15s
+
+  # Pipeline Orchestrator Service
   - job_name: 'pipeline-orchestrator'
     static_configs:
-      - targets: ['pipeline-orchestrator:8000']
+      - targets: ['pipeline-orchestrator:8004']
     metrics_path: /metrics
-    scrape_interval: 30s
+    scrape_interval: 15s
 
-  # Monitoring Engine
-  - job_name: 'monitoring-engine'
+  # A/B Testing Service
+  - job_name: 'ab-testing'
     static_configs:
-      - targets: ['monitoring-engine:8000']
+      - targets: ['ab-testing:8090']
     metrics_path: /metrics
-    scrape_interval: 30s
+    scrape_interval: 15s
 
-  # MLflow
-  - job_name: 'mlflow'
+  # Grafana
+  - job_name: 'grafana'
     static_configs:
-      - targets: ['host.docker.internal:5050', 'mlops-mlflow:5000']
+      - targets: ['grafana:3000']
     metrics_path: /metrics
     scrape_interval: 30s
 
   # Infrastructure services
   - job_name: 'postgres'
     static_configs:
-      - targets: ['host.docker.internal:5432', 'mlops-project-postgres-1:5432']
+      - targets: ['postgres:5432']
     scrape_interval: 30s
 
   - job_name: 'redis'
     static_configs:
-      - targets: ['host.docker.internal:6379', 'mlops-project-redis-1:6379']
+      - targets: ['redis:6379']
     scrape_interval: 30s
 
   - job_name: 'minio'
     static_configs:
-      - targets: ['host.docker.internal:9000', 'mlops-project-minio-1:9000']
+      - targets: ['minio:9000']
     metrics_path: /minio/v2/metrics/cluster
     scrape_interval: 30s
 
@@ -83,4 +74,4 @@ alerting:
   alertmanagers:
     - static_configs:
         - targets:
-          - host.docker.internal:9093
+          - alertmanager:9093
