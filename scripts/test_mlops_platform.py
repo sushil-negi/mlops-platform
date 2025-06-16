@@ -98,9 +98,10 @@ def test_core_services() -> List[bool]:
 
     # Test PostgreSQL
     try:
+        import os
+
         import psycopg2
 
-        import os
         conn = psycopg2.connect(
             host="localhost",
             port=5432,
