@@ -2,7 +2,7 @@
 -- WARNING: This file should not contain hardcoded passwords
 -- Use init-template.sql with environment variable substitution instead
 -- For development, set MLFLOW_PASSWORD environment variable
-CREATE USER mlflow WITH PASSWORD '${MLFLOW_PASSWORD}'; -- Must be substituted at runtime
+CREATE USER mlflow WITH PASSWORD 'mLHWDctQyjwPXqKlrRv6Gg==';
 CREATE DATABASE mlflow OWNER mlflow;
 CREATE DATABASE model_registry OWNER mlops;
 CREATE DATABASE experiment_tracking OWNER mlops;
