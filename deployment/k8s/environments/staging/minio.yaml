@@ -1,15 +1,40 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: minio-secret
-  namespace: healthcare-ai-staging
-type: Opaque
-data:
-  # STAGING ENVIRONMENT: Use staging-appropriate credentials
-  # echo -n 'minioadmin' | base64
-  username: bWluaW9hZG1pbg==
-  # echo -n 'staging123' | base64
-  password: c3RhZ2luZzEyMw==
+# IMPORTANT: Secret management for MinIO credentials
+# This file previously contained hardcoded base64-encoded secrets which have been removed for security.
+# 
+# Please use external secret management solutions such as:
+# - Kubernetes Secrets Store CSI Driver
+# - HashiCorp Vault
+# - AWS Secrets Manager
+# - Azure Key Vault
+# - Google Secret Manager
+# - Sealed Secrets
+#
+# The deployment expects a Secret named 'minio-secret' with the following keys:
+# - username: MinIO root username
+# - password: MinIO root password
+#
+# Example using external-secrets operator:
+# ---
+# apiVersion: external-secrets.io/v1beta1
+# kind: ExternalSecret
+# metadata:
+#   name: minio-secret
+#   namespace: healthcare-ai-staging
+# spec:
+#   secretStoreRef:
+#     name: vault-backend
+#     kind: SecretStore
+#   target:
+#     name: minio-secret
+#   data:
+#   - secretKey: username
+#     remoteRef:
+#       key: staging/minio
+#       property: username
+#   - secretKey: password
+#     remoteRef:
+#       key: staging/minio
+#       property: password
 
 ---
 apiVersion: apps/v1

@@ -48,11 +48,13 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # Create test environment file
+# NOTE: These are test-only credentials used for local integration testing
+# In production, these values should come from secure secret management
 print_status "Creating test environment configuration..."
 cat > .env << EOF
-POSTGRES_PASSWORD=test123
-MINIO_ROOT_PASSWORD=test123
-GRAFANA_ADMIN_PASSWORD=test123
+POSTGRES_PASSWORD=test123  # TEST ONLY - Use environment variables in production
+MINIO_ROOT_PASSWORD=test123  # TEST ONLY - Use environment variables in production
+GRAFANA_ADMIN_PASSWORD=test123  # TEST ONLY - Use environment variables in production
 EOF
 
 # Cleanup any existing containers
@@ -74,6 +76,7 @@ sleep 120
 print_status "Checking infrastructure services..."
 
 echo "  Checking PostgreSQL..."
+# Using test password from .env file created above
 timeout 300 bash -c 'until PGPASSWORD=test123 pg_isready -h localhost -U mlops -d mlops_platform > /dev/null 2>&1; do sleep 5; done' || {
     print_error "PostgreSQL failed to start"
     docker compose -f docker-compose.platform.yml logs postgres

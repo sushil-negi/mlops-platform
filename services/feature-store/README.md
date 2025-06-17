@@ -67,8 +67,8 @@ pip install -r requirements.txt
 export DATABASE_URL="postgresql://user:pass@localhost:5432/feature_store"
 export REDIS_URL="redis://localhost:6379"
 export S3_ENDPOINT="http://localhost:9000"
-export S3_ACCESS_KEY="minioadmin"
-export S3_SECRET_KEY="minioadmin"
+export S3_ACCESS_KEY="your-access-key"
+export S3_SECRET_KEY="your-secret-key"
 ```
 
 ### Start the Service
@@ -246,8 +246,8 @@ POST /api/v1/serving/historical
 STORAGE_BACKEND=s3
 S3_ENDPOINT=http://minio:9000
 S3_BUCKET=feature-store
-S3_ACCESS_KEY=minioadmin
-S3_SECRET_KEY=minioadmin
+S3_ACCESS_KEY=your-access-key
+S3_SECRET_KEY=your-secret-key
 
 # Local File System
 STORAGE_BACKEND=local

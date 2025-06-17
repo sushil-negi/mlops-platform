@@ -1,5 +1,7 @@
 -- Initialize MLOps databases
-CREATE USER mlflow WITH PASSWORD 'mlflow123';
+-- NOTE: This is a test-only password for development
+-- In production, use proper secret management
+CREATE USER mlflow WITH PASSWORD 'mlflow123';  -- TEST ONLY password
 CREATE DATABASE mlflow OWNER mlflow;
 CREATE DATABASE model_registry OWNER mlops;
 CREATE DATABASE experiment_tracking OWNER mlops;

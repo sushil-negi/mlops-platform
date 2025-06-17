@@ -1,17 +1,5 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: postgres-secret
-  namespace: healthcare-ai-dev
-type: Opaque
-data:
-  # echo -n 'mlflow' | base64
-  username: bWxmbG93
-  # echo -n 'mlflow123' | base64  
-  password: bWxmbG93MTIz
-  # echo -n 'mlflow_dev' | base64
-  database: bWxmbG93X2Rldg==
-
+# Secret removed - use postgres-secret-template.yaml or external secret management
+# kubectl create secret generic postgres-secret --from-env-file=.env -n healthcare-ai-dev
 ---
 apiVersion: v1
 kind: ConfigMap

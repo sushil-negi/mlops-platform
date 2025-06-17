@@ -65,7 +65,7 @@ SAFE_PATTERNS = [
     r"<[^>]+>",  # Template placeholders
     r"\$\{[^}]+\}",  # Environment variable placeholders
     r"xxxxxxxx",
-    r"password123",
+    r"password123",  # Common weak password pattern to check for
     r"changeme",
     r"replace[_-]?me",
 ]

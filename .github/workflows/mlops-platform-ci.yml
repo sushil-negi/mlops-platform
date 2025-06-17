@@ -96,11 +96,12 @@ jobs:
     
     - name: Create test environment file
       run: |
+        # NOTE: These are CI/test-only credentials
         cat > .env << EOF
-        POSTGRES_PASSWORD=test123
-        MINIO_ROOT_USER=minioadmin
-        MINIO_ROOT_PASSWORD=test123456
-        GRAFANA_ADMIN_PASSWORD=test123
+        POSTGRES_PASSWORD=test123  # CI test only
+        MINIO_ROOT_USER=minioadmin  # CI test only
+        MINIO_ROOT_PASSWORD=test123456  # CI test only
+        GRAFANA_ADMIN_PASSWORD=test123  # CI test only
         SECRET_KEY=test-secret-key-for-ci
         API_SECRET_KEY=test-api-secret-key
         JWT_SECRET_KEY=test-jwt-secret-key
@@ -239,11 +240,12 @@ jobs:
     
     - name: Create test environment file
       run: |
+        # NOTE: These are CI/test-only credentials
         cat > .env << EOF
-        POSTGRES_PASSWORD=test123
-        MINIO_ROOT_USER=minioadmin
-        MINIO_ROOT_PASSWORD=test123456
-        GRAFANA_ADMIN_PASSWORD=test123
+        POSTGRES_PASSWORD=test123  # CI test only
+        MINIO_ROOT_USER=minioadmin  # CI test only
+        MINIO_ROOT_PASSWORD=test123456  # CI test only
+        GRAFANA_ADMIN_PASSWORD=test123  # CI test only
         SECRET_KEY=test-secret-key-for-ci
         API_SECRET_KEY=test-api-secret-key
         JWT_SECRET_KEY=test-jwt-secret-key

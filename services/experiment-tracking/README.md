@@ -67,8 +67,8 @@ pip install -r requirements.txt
 export DATABASE_URL="postgresql://user:pass@localhost:5432/experiment_tracking"
 export REDIS_URL="redis://localhost:6379"
 export MINIO_ENDPOINT="localhost:9000"
-export MINIO_ACCESS_KEY="minioadmin"
-export MINIO_SECRET_KEY="minioadmin"
+export MINIO_ACCESS_KEY="your-access-key"
+export MINIO_SECRET_KEY="your-secret-key"
 ```
 
 ### Start the Service
@@ -393,8 +393,8 @@ REDIS_TTL=3600
 
 # Storage (MinIO/S3)
 MINIO_ENDPOINT=localhost:9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
+MINIO_ACCESS_KEY=your-access-key
+MINIO_SECRET_KEY=your-secret-key
 STORAGE_BUCKET_EXPERIMENTS=experiments
 STORAGE_BUCKET_ARTIFACTS=artifacts
 

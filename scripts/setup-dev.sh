@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Cirruslabs MLOps Development Environment Setup
+# NOTE: This script uses test-only credentials for local development
+# In production, use proper secret management for passwords
 
 set -e
 
@@ -146,10 +148,10 @@ DATABASE_URL=postgresql://mlops:mlops123@localhost:5432/mlops
 # Redis
 REDIS_URL=redis://localhost:6379/0
 
-# MinIO (S3-compatible storage)
+# MinIO (S3-compatible storage) - TEST ONLY credentials
 MINIO_ENDPOINT=localhost:9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin123
+MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY:-minioadmin}  # Use env var or test default
+MINIO_SECRET_KEY=${MINIO_SECRET_KEY:-minioadmin123}  # Use env var or test default
 MINIO_SECURE=false
 
 # Message Queue
@@ -267,8 +269,8 @@ print_summary() {
     echo "3. Access services:"
     echo "   - API Gateway: http://localhost:8080"
     echo "   - Model Registry: http://localhost:8001"
-    echo "   - Grafana: http://localhost:3000 (admin/admin123)"
-    echo "   - MinIO: http://localhost:9001 (minioadmin/minioadmin123)"
+    echo "   - Grafana: http://localhost:3000 (admin/[check GRAFANA_ADMIN_PASSWORD env var or test default])"
+    echo "   - MinIO: http://localhost:9001 ([check MINIO_ACCESS_KEY env var or test default]/[check MINIO_SECRET_KEY env var or test default])"
     echo "   - RabbitMQ: http://localhost:15672 (mlops/mlops123)"
     echo ""
     echo "4. Run tests: make test"

@@ -387,8 +387,8 @@ FEATURE_STORE_URL=http://localhost:8002
 
 # Storage
 MINIO_ENDPOINT=localhost:9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
+MINIO_ACCESS_KEY=your-access-key
+MINIO_SECRET_KEY=your-secret-key
 ```
 
 ### Advanced Configuration

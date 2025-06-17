@@ -28,7 +28,13 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     # Database settings
-    database_url: str = "postgresql://mlops:mlops123@localhost:5432/experiment_tracking"
+    database_url: str = Field(
+        default=os.getenv(
+            "DATABASE_URL",
+            "postgresql://mlops:password@localhost:5432/experiment_tracking",
+        ),
+        description="Database connection URL - set via DATABASE_URL env var",
+    )
     database_pool_size: int = 20
     database_max_overflow: int = 0
 
@@ -40,8 +46,14 @@ class Settings(BaseSettings):
     # Storage settings (MinIO/S3)
     storage_backend: str = "minio"
     minio_endpoint: str = "localhost:9000"
-    minio_access_key: str = "minioadmin"
-    minio_secret_key: str = "minioadmin"
+    minio_access_key: str = Field(
+        default=os.getenv("MINIO_ACCESS_KEY", ""),
+        description="MinIO access key - must be set via MINIO_ACCESS_KEY env var",
+    )
+    minio_secret_key: str = Field(
+        default=os.getenv("MINIO_SECRET_KEY", ""),
+        description="MinIO secret key - must be set via MINIO_SECRET_KEY env var",
+    )
     minio_secure: bool = False
 
     # Storage buckets

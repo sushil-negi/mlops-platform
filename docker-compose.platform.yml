@@ -7,11 +7,11 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/model_registry
+      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD}@postgres:5432/model_registry
       - REDIS_URL=redis://redis:6379
       - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
       - MINIO_SECURE=false
     depends_on:
       postgres:
@@ -35,12 +35,12 @@ services:
     ports:
       - "8003:8003"
     environment:
-      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/experiment_tracking
+      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD}@postgres:5432/experiment_tracking
       - REDIS_URL=redis://redis:6379
       - MODEL_REGISTRY_URL=http://model-registry:8000
       - minio_endpoint=minio:9000
-      - minio_access_key=${MINIO_ROOT_USER:-minioadmin}
-      - minio_secret_key=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - minio_access_key=${MINIO_ROOT_USER}
+      - minio_secret_key=${MINIO_ROOT_PASSWORD}
       - minio_secure=false
     depends_on:
       - postgres
@@ -61,11 +61,11 @@ services:
     ports:
       - "8002:8002"
     environment:
-      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/feature_store
+      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD}@postgres:5432/feature_store
       - REDIS_URL=redis://redis:6379
       - S3_ENDPOINT=http://minio:9000
-      - S3_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
-      - S3_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - S3_ACCESS_KEY=${MINIO_ROOT_USER}
+      - S3_SECRET_KEY=${MINIO_ROOT_PASSWORD}
       - S3_USE_SSL=false
     depends_on:
       postgres:
@@ -91,14 +91,14 @@ services:
     ports:
       - "8004:8004"
     environment:
-      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/pipeline_orchestrator
+      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD}@postgres:5432/pipeline_orchestrator
       - REDIS_URL=redis://redis:6379
       - MODEL_REGISTRY_URL=http://model-registry:8000
       - EXPERIMENT_TRACKING_URL=http://experiment-tracking:8003
       - FEATURE_STORE_URL=http://feature-store:8002
       - MINIO_ENDPOINT=minio:9000
-      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER:-minioadmin}
-      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - MINIO_ACCESS_KEY=${MINIO_ROOT_USER}
+      - MINIO_SECRET_KEY=${MINIO_ROOT_PASSWORD}
       - MINIO_SECURE=false
     depends_on:
       postgres:
@@ -126,7 +126,7 @@ services:
     ports:
       - "8090:8090"
     environment:
-      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD:-mlflow123}@postgres:5432/ab_testing
+      - DATABASE_URL=postgresql://mlops:${POSTGRES_PASSWORD}@postgres:5432/ab_testing
       - REDIS_URL=redis://redis:6379
       - MODEL_REGISTRY_URL=http://model-registry:8000
       - PROMETHEUS_URL=http://prometheus:9090
@@ -155,7 +155,7 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_USER=mlops
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-mlflow123}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=mlops_platform
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -191,8 +191,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-minioadmin}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-minioadmin123}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     volumes:
       - minio_data:/data
     networks:
@@ -234,7 +234,7 @@ services:
       - "3001:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana_data:/var/lib/grafana

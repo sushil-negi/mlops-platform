@@ -1,8 +1,15 @@
+-- MLOps Platform Database Initialization Template
+-- 
+-- This file should be processed with environment variables before use.
+-- Never commit actual passwords to version control.
+--
+-- Usage:
+-- envsubst < init-template.sql > init.sql
+-- Or use Docker secrets/configs to inject at runtime
+
 -- Initialize MLOps databases
--- WARNING: This file should not contain hardcoded passwords
--- Use init-template.sql with environment variable substitution instead
--- For development, set MLFLOW_PASSWORD environment variable
-CREATE USER mlflow WITH PASSWORD '${MLFLOW_PASSWORD}'; -- Must be substituted at runtime
+-- Password should be injected via environment variable or secret
+CREATE USER mlflow WITH PASSWORD '${MLFLOW_PASSWORD}';
 CREATE DATABASE mlflow OWNER mlflow;
 CREATE DATABASE model_registry OWNER mlops;
 CREATE DATABASE experiment_tracking OWNER mlops;
@@ -46,11 +53,8 @@ CREATE TABLE IF NOT EXISTS pipeline_runs (
 );
 
 -- Create indexes for better performance
-
 \c pipeline_orchestrator;
 CREATE INDEX IF NOT EXISTS idx_pipeline_runs_status ON pipeline_runs(status);
-
--- Sample data will be managed by the Model Registry service
 
 -- Insert sample data in Pipeline Orchestrator
 \c pipeline_orchestrator;

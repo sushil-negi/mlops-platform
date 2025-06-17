@@ -39,8 +39,8 @@ class Settings(BaseSettings):
     S3_ENDPOINT: Optional[str] = Field(
         default="http://localhost:9000", env="S3_ENDPOINT"
     )
-    S3_ACCESS_KEY: Optional[str] = Field(default="minioadmin", env="S3_ACCESS_KEY")
-    S3_SECRET_KEY: Optional[str] = Field(default="minioadmin", env="S3_SECRET_KEY")
+    S3_ACCESS_KEY: Optional[str] = Field(default=None, env="S3_ACCESS_KEY")
+    S3_SECRET_KEY: Optional[str] = Field(default=None, env="S3_SECRET_KEY")
     S3_BUCKET: str = Field(default="feature-store", env="S3_BUCKET")
     S3_USE_SSL: bool = Field(default=False, env="S3_USE_SSL")
 

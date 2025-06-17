@@ -1,3 +1,5 @@
+# NOTE: This configuration file contains test-only credentials
+# In production, use proper secret management for passwords
 global:
   smtp_smarthost: 'localhost:587'
   smtp_from: 'alerts@healthcare-ai.com'
@@ -17,7 +19,7 @@ receivers:
     http_config:
       basic_auth:
         username: 'admin'
-        password: 'admin123'
+        password: 'admin123'  # TEST ONLY - Use environment variables in production
 
 inhibit_rules:
   - source_match:

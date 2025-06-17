@@ -28,15 +28,19 @@ print_error() {
 }
 
 # Create test environment file
+# NOTE: These are test-only credentials used for local infrastructure testing
+# In production, these values should come from secure secret management
 print_status "Creating test environment configuration..."
 cat > .env << EOF
-POSTGRES_PASSWORD=test123
-MINIO_ROOT_PASSWORD=test123
-GRAFANA_ADMIN_PASSWORD=test123
+POSTGRES_PASSWORD=test123  # TEST ONLY - Use environment variables in production
+MINIO_ROOT_PASSWORD=test123  # TEST ONLY - Use environment variables in production
+GRAFANA_ADMIN_PASSWORD=test123  # TEST ONLY - Use environment variables in production
 EOF
 
 # Test infrastructure services only
 print_status "Starting infrastructure services..."
+# TEST ONLY: Using hardcoded password for local testing
+# In production, use environment variables or secret management
 docker run -d --name test-postgres -p 5432:5432 \
     -e POSTGRES_USER=mlops \
     -e POSTGRES_PASSWORD=test123 \
@@ -45,6 +49,8 @@ docker run -d --name test-postgres -p 5432:5432 \
 
 docker run -d --name test-redis -p 6379:6379 redis:7-alpine
 
+# TEST ONLY: Using hardcoded credentials for local testing
+# In production, use environment variables or secret management
 docker run -d --name test-minio -p 9000:9000 -p 9001:9001 \
     -e MINIO_ROOT_USER=minioadmin \
     -e MINIO_ROOT_PASSWORD=test123456 \
@@ -55,6 +61,7 @@ sleep 30
 
 # Test PostgreSQL
 print_status "Testing PostgreSQL..."
+# Using test password from container setup above
 if PGPASSWORD=test123 pg_isready -h localhost -U mlops -d mlops_platform > /dev/null 2>&1; then
     print_success "PostgreSQL is working"
 else

@@ -107,7 +107,7 @@ def test_core_services() -> List[bool]:
             port=5432,
             database="mlflow",
             user="mlflow",
-            password=os.getenv("POSTGRES_PASSWORD", "mlflow123"),
+            password=os.getenv("POSTGRES_PASSWORD"),
         )
         conn.close()
         print("✓ PostgreSQL is accessible")

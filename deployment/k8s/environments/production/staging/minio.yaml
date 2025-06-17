@@ -1,15 +1,40 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: minio-secret
-  namespace: healthcare-ai-production
-type: Opaque
-data:
-  # IMPORTANT: Update these with actual production secrets before deployment
-  # Example: echo -n 'production-username' | base64
-  username: PLEASE_UPDATE_PRODUCTION_MINIO_USERNAME_BASE64
-  # Example: echo -n 'secure-production-password' | base64  
-  password: PLEASE_UPDATE_PRODUCTION_MINIO_PASSWORD_BASE64
+# IMPORTANT: Secret management for MinIO credentials
+# This file previously contained hardcoded base64-encoded secrets which have been removed for security.
+# 
+# Please use external secret management solutions such as:
+# - Kubernetes Secrets Store CSI Driver
+# - HashiCorp Vault
+# - AWS Secrets Manager
+# - Azure Key Vault
+# - Google Secret Manager
+# - Sealed Secrets
+#
+# The deployment expects a Secret named 'minio-secret' with the following keys:
+# - username: MinIO root username
+# - password: MinIO root password
+#
+# Example using external-secrets operator:
+# ---
+# apiVersion: external-secrets.io/v1beta1
+# kind: ExternalSecret
+# metadata:
+#   name: minio-secret
+#   namespace: healthcare-ai-production
+# spec:
+#   secretStoreRef:
+#     name: vault-backend
+#     kind: SecretStore
+#   target:
+#     name: minio-secret
+#   data:
+#   - secretKey: username
+#     remoteRef:
+#       key: production/minio
+#       property: username
+#   - secretKey: password
+#     remoteRef:
+#       key: production/minio
+#       property: password
 
 ---
 apiVersion: apps/v1

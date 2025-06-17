@@ -1,16 +1,45 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: postgres-secret
-  namespace: healthcare-ai-staging
-type: Opaque
-data:
-  # echo -n 'mlflow' | base64
-  username: bWxmbG93
-  # echo -n 'mlflow123' | base64  
-  password: bWxmbG93MTIz
-  # echo -n 'mlflow_staging' | base64
-  database: bWxmbG93X3N0YWdpbmc=
+# IMPORTANT: Secret management for PostgreSQL credentials
+# This file previously contained hardcoded base64-encoded secrets which have been removed for security.
+# 
+# Please use external secret management solutions such as:
+# - Kubernetes Secrets Store CSI Driver
+# - HashiCorp Vault
+# - AWS Secrets Manager
+# - Azure Key Vault
+# - Google Secret Manager
+# - Sealed Secrets
+#
+# The deployment expects a Secret named 'postgres-secret' with the following keys:
+# - username: PostgreSQL username
+# - password: PostgreSQL password  
+# - database: PostgreSQL database name
+#
+# Example using external-secrets operator:
+# ---
+# apiVersion: external-secrets.io/v1beta1
+# kind: ExternalSecret
+# metadata:
+#   name: postgres-secret
+#   namespace: healthcare-ai-staging
+# spec:
+#   secretStoreRef:
+#     name: vault-backend
+#     kind: SecretStore
+#   target:
+#     name: postgres-secret
+#   data:
+#   - secretKey: username
+#     remoteRef:
+#       key: staging/postgres
+#       property: username
+#   - secretKey: password
+#     remoteRef:
+#       key: staging/postgres
+#       property: password
+#   - secretKey: database
+#     remoteRef:
+#       key: staging/postgres
+#       property: database
 
 ---
 apiVersion: v1

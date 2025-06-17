@@ -4,10 +4,8 @@ metadata:
   name: mlflow-config
   namespace: healthcare-ai-staging
 data:
-  MLFLOW_BACKEND_STORE_URI: "postgresql://mlflow:mlflow123@postgres:5432/mlflow_staging"
   MLFLOW_DEFAULT_ARTIFACT_ROOT: "s3://mlflow-artifacts-staging/"
   AWS_ACCESS_KEY_ID: "mlflow"
-  AWS_SECRET_ACCESS_KEY: "mlflow123"
   MLFLOW_S3_ENDPOINT_URL: "http://minio:9000"
   AWS_S3_VERIFY_SSL: "false"
   MLFLOW_S3_IGNORE_TLS: "true"
@@ -65,6 +63,17 @@ spec:
         envFrom:
         - configMapRef:
             name: mlflow-config
+        env:
+        - name: MLFLOW_BACKEND_STORE_URI
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secrets
+              key: backend-store-uri
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secrets
+              key: aws-secret-access-key
         livenessProbe:
           httpGet:
             path: /

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# NOTE: This script uses test-only credentials for local development
+# In production, use proper secret management for passwords
 echo "Installing Prometheus and Grafana monitoring stack..."
 
 # Add Prometheus helm repo
@@ -10,7 +12,7 @@ helm repo update
 helm install monitoring prometheus-community/kube-prometheus-stack \
   --namespace mlops-monitoring \
   --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
-  --set grafana.adminPassword=admin123 \
+  --set grafana.adminPassword=${GRAFANA_ADMIN_PASSWORD:-admin123} \  # Use env var or test default
   --set prometheus.service.type=NodePort \
   --set prometheus.service.nodePort=30090 \
   --set grafana.service.type=NodePort \
@@ -19,4 +21,4 @@ helm install monitoring prometheus-community/kube-prometheus-stack \
 
 echo "Monitoring stack installed!"
 echo "Prometheus: http://localhost:30090"
-echo "Grafana: http://localhost:30091 (admin/admin123)"
+echo "Grafana: http://localhost:30091 (admin/[password from GRAFANA_ADMIN_PASSWORD env var or test default])"
