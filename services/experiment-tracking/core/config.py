@@ -62,9 +62,9 @@ class Settings(BaseSettings):
     storage_bucket_visualizations: str = "visualizations"
 
     # MLOps service integration
-    registry_service_url: str = "http://localhost:8000"
-    pipeline_orchestrator_url: str = "http://localhost:8001"
-    feature_store_url: str = "http://localhost:8002"
+    registry_service_url: str = "http://model-registry:8000"
+    pipeline_orchestrator_url: str = "http://pipeline-orchestrator:8004"
+    feature_store_url: str = "http://feature-store:8002"
 
     # Experiment settings
     max_concurrent_experiments: int = 50
