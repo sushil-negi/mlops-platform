@@ -25,8 +25,8 @@ required_files=(
     "services/ab-testing/src/main.py"
     "services/ab-testing/Dockerfile"
     "services/mlflow/Dockerfile"
-    "k8s/environments/staging/namespace.yaml"
-    "k8s/environments/production/staging/namespace.yaml"
+    "deployment/k8s/environments/staging/namespace.yaml"
+    "deployment/k8s/environments/production/namespace.yaml"
     "tests/unit/"
     "tests/integration/"
     "tests/e2e/"
@@ -92,9 +92,9 @@ echo ""
 echo "☸️ Checking Kubernetes manifests..."
 
 k8s_dirs=(
-    "k8s/environments/dev"
-    "k8s/environments/staging"
-    "k8s/environments/production/staging"
+    "deployment/k8s/environments/dev"
+    "deployment/k8s/environments/staging"
+    "deployment/k8s/environments/production"
 )
 
 for dir in "${k8s_dirs[@]}"; do
